@@ -2,7 +2,7 @@ package org.sebastian.liceoyarah.ms.persons.common.swagger.persons;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.sebastian.propoligas.persons.persons.entities.PersonEntity;
+import org.sebastian.liceoyarah.ms.persons.entities.Person;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class PersonResponseList {
         private List<Link> links;
 
         @Schema(description = "Contenido de la respuesta")
-        private List<PersonEntity> content;
+        private List<Person> content;
 
         @Schema(description = "Información de la página")
         private PageInfo page;

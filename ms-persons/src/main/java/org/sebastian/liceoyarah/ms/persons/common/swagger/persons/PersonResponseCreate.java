@@ -3,7 +3,7 @@ package org.sebastian.liceoyarah.ms.persons.common.swagger.persons;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.sebastian.propoligas.persons.persons.entities.PersonEntity;
+import org.sebastian.liceoyarah.ms.persons.entities.Person;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class PersonResponseCreate {
 
-    private PersonEntity data;
+    private Person data;
     private Meta meta;
 
     @Data

@@ -2,8 +2,8 @@ package org.sebastian.liceoyarah.ms.persons.common.swagger.persons;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.sebastian.propoligas.persons.persons.common.utils.ApiResponseConsolidation;
-import org.sebastian.propoligas.persons.persons.common.utils.ErrorsValidationsResponse;
+import org.sebastian.liceoyarah.ms.persons.common.utils.ApiResponseConsolidation;
+import org.sebastian.liceoyarah.ms.persons.common.utils.ErrorsValidationsResponse;
 
 @Data
 @Schema(description = "Respuesta de error en la validación de paginación")
