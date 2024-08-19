@@ -10,10 +10,7 @@ public class ErrorsValidationsResponse {
     public Object validation(BindingResult result) {
 
         Map<String, String> errors = new HashMap<>();
-        result.getFieldErrors().forEach(err -> {
-            errors.put(err.getField(), err.getDefaultMessage());
-        });
-
+        result.getFieldErrors().forEach(err -> errors.put(err.getField(), err.getDefaultMessage()));
         return errors;
 
     }
