@@ -27,8 +27,9 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
     );
 
     //Buscador dinámico para ser usado desde otros micro servicios
-    @Query("SELECT p.id FROM Person p " +
-            "WHERE " +
+    //Usaremos los números de documentos que son irrepetibles
+    @Query("SELECT p.documentNumber FROM Person p " +
+            "WHERE p.status = true AND" +
             "(UPPER(p.documentType) LIKE UPPER(CONCAT('%', :search, '%')) OR " +
             "UPPER(p.documentNumber) LIKE UPPER(CONCAT('%', :search, '%')) OR " +
             "UPPER(p.firstName) LIKE UPPER(CONCAT('%', :search, '%')) OR " +
@@ -49,7 +50,7 @@ public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecif
 
     //Buscador dinámico para el filtro de búsqueda
     @Query("SELECT p FROM Person p " +
-            "WHERE " +
+            "WHERE p.status = true AND" +
             "(UPPER(p.documentType) LIKE UPPER(CONCAT('%', :search, '%')) OR " +
             "UPPER(p.documentNumber) LIKE UPPER(CONCAT('%', :search, '%')) OR " +
             "UPPER(p.firstName) LIKE UPPER(CONCAT('%', :search, '%')) OR " +

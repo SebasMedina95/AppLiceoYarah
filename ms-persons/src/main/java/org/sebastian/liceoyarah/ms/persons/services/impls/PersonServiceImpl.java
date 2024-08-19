@@ -180,12 +180,50 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Person> delete(Long id) {
-        return null;
+
+        try{
+
+            Optional<Person> personOptional = personRepository.findById(id);
+
+            if( personOptional.isPresent() ){
+
+                Person personDb = personOptional.orElseThrow();
+
+                //? Vamos a actualizar si llegamos hasta acá
+                //? ESTO SERÁ UN ELIMINADO LÓGICO!
+                personDb.setStatus(false);
+                personDb.setUserUpdated("usuario123");
+                personDb.setDateUpdated(new Date());
+
+                return new ResponseWrapper<>(personRepository.save(personDb), "Persona Eliminada Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "La persona no fue encontrado");
+
+            }
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar eliminar lógicamente persona por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "La persona no pudo ser eliminada");
+
+        }
+
     }
 
+    // Esta funcionalidad tiene el propósito de realizar búsquedas anidadas desde otros micros
+    // por ejemplo, desde el micro de usuarios y estudiantes poder buscar a nivel también de la
+    // persona potencialmente vinculada. Para este ejercicio, harémos que se devuelva un listado
+    // a nivel de documentos,
+    // ? EL DOCUMENTO SERÁ EL CAMPO REFERENCIA ASOCIABLE EN TODA LA APLICACIÓN ?//
     @Override
+    @Transactional(readOnly = true)
     public List<Long> findPersonIdsByCriteria(String search) {
-        return List.of();
+
+        return personRepository.findIdsByCriteria(search);
+
     }
 }
