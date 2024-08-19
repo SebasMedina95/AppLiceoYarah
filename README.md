@@ -52,3 +52,29 @@ compile
 install
 ````
 Asegurese que las dependencias están instaladas en el POM
+
+---------------------------------------------------------------------------------------
+
+### Documentación Swagger
+* Microservicio de personas (MS Persons) -> **ms-persons**.
+Ingrese a la siguiente URL:
+````dockerfile
+http://localhost:18881/business/swagger-ui/index.html
+````
+
+* Microservicio de usuarios (MS Users) -> **ms-users**.
+  Ingrese a la siguiente URL:
+````dockerfile
+http://localhost:18882/business/swagger-ui/index.html
+````
+
+* Microservicio de estudiantes (MS Students) -> **ms-students**.
+  Ingrese a la siguiente URL:
+````dockerfile
+http://localhost:18883/business/swagger-ui/index.html
+````
+
+**Nota:** Tener en cuenta que el puerto puede variar según las configuraciones de las 
+properties, lo mismo el index.html según las configuraciones aplicadas. Tenga en cuenta
+esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
+
