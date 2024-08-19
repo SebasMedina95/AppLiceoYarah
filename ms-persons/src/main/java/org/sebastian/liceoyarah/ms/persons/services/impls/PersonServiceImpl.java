@@ -95,13 +95,88 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseWrapper<Person> findById(Long id) {
-        return null;
+
+        logger.info("Iniciando Acción - MS Persons - Obtener una persona dado su ID");
+
+        try{
+
+            Optional<Person> personOptional = personRepository.findById(id);
+
+            if( personOptional.isPresent() ){
+                Person person = personOptional.orElseThrow();
+                logger.info("Persona obtenida por su ID");
+                return new ResponseWrapper<>(person, "Persona encontrada por ID correctamente");
+            }
+
+            logger.info("La persona no pudo ser encontrada cone el ID {}", id);
+            return new ResponseWrapper<>(null, "La persona no pudo ser encontrado por el ID " + id);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener persona por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "La persona no pudo ser encontrado por el ID");
+
+        }
+
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Person> update(Long id, UpdatePersonDto person) {
-        return null;
+
+        logger.info("Iniciando Acción - MS Persons - Actualizar una persona dado su ID");
+
+        try{
+
+            Optional<Person> personOptional = personRepository.findById(id);
+            if( personOptional.isPresent() ){
+
+                Person personDb = personOptional.orElseThrow();
+
+                //? Validemos que no se repita la persona
+                String personEmail = person.getEmail().trim().toUpperCase();
+                Optional<Person> getPersonOptionalByDocumentAndEmail = personRepository.getPersonByDocumentAndEmailForEdit(personEmail, id);
+
+                if( getPersonOptionalByDocumentAndEmail.isPresent() ){
+                    logger.info("La persona no se puede actualizar porque el email ya está registrado");
+                    return new ResponseWrapper<>(null, "El email de la persona ya está registrado");
+                }
+
+                //? Vamos a actualizar si llegamos hasta acá
+                personDb.setFirstName(person.getFirstName());
+                personDb.setSecondName(person.getSecondName());
+                personDb.setFirstSurname(person.getFirstSurname());
+                personDb.setSecondSurname(person.getSecondSurname());
+                personDb.setEmail(person.getEmail());
+                personDb.setGender(person.getGender());
+                personDb.setPhone1(person.getPhone1());
+                personDb.setPhone2(person.getPhone2());
+                personDb.setAddress(person.getAddress());
+                personDb.setNeighborhood(person.getNeighborhood());
+                personDb.setDescription(person.getDescription());
+                personDb.setCivilStatus(person.getCivilStatus());
+                personDb.setStatus(true); //* Por defecto entra en true
+                personDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
+                personDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
+
+                logger.info("La persona fue actualizada correctamente");
+                return new ResponseWrapper<>(personRepository.save(personDb), "Persona Actualizada Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "La persona no fue encontrada");
+
+            }
+
+        }catch (Exception err){
+
+            logger.error("Ocurrió un error al intentar actualizar persona por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "La persona no pudo ser actualizada");
+
+        }
+
     }
 
     @Override
