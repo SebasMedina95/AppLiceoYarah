@@ -12,8 +12,8 @@ import java.util.List;
 @FeignClient(name = "yarah-ms-persons", url = "localhost:18881/business/v1/api/persons")
 public interface PersonClientRest {
 
-    @GetMapping("/find-by-id/{id}")
-    ApiResponseConsolidation<Persons> getPerson(@PathVariable("id") Long id);
+    @GetMapping("/find-by-document/{documentNumber}")
+    ApiResponseConsolidation<Persons> getPerson(@PathVariable("documentNumber") String documentNumber);
 
     //! Funcionalidad especial para la búsqueda por filtros
     @GetMapping("/find-by-search")

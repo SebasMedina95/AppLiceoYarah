@@ -13,6 +13,11 @@ import java.util.Optional;
 
 public interface PersonRepository extends JpaRepository<Person, Long>, JpaSpecificationExecutor<Person> {
 
+    @Query("SELECT p FROM Person p WHERE p.documentNumber = :documentNumber")
+    Optional<Person> findByNumberDocument(
+            @Param("documentNumber") String documentNumber
+    );
+
     @Query("SELECT p FROM Person p WHERE UPPER(p.email) = UPPER(:email) OR p.documentNumber = :documentNumber")
     Optional<Person> getPersonByDocumentAndByEmail(
             @Param("email") String email,

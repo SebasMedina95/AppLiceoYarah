@@ -253,6 +253,71 @@ public class PersonController {
 
     }
 
+    @GetMapping("/find-by-document/{documentNumber}")
+    @Operation(
+            summary = "Obtener persona por Número de Documento",
+            description = "Obtener una persona dado el Número de Documento",
+            parameters = {
+                    @Parameter(name = "documentNumber", description = "Número Documento de la persona a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Persona encontrada.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = PersonResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Persona no encontrada",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class)))
+            }
+    )
+    public ResponseEntity<ApiResponseConsolidation<Person>> findByNumberDocument(
+            @PathVariable("documentNumber") String documentNumber
+    ){
+
+        ResponseWrapper<Person> personGet;
+
+        //Validación del ID
+        try {
+            personGet = personService.findByNumberDocument(documentNumber);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado para obtener una persona es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( personGet.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            personGet.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Persona obtenida por ID.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                personGet.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
+
     @PutMapping("update-by-id/{id}")
     @Operation(
             summary = "Actualizar una persona",

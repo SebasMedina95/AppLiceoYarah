@@ -122,6 +122,34 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public ResponseWrapper<Person> findByNumberDocument(String numberDocument) {
+
+        logger.info("Iniciando Acción - MS Persons - Obtener una persona dado su Número de Documento");
+
+        try{
+
+            Optional<Person> personOptional = personRepository.findByNumberDocument(numberDocument);
+
+            if( personOptional.isPresent() ){
+                Person person = personOptional.orElseThrow();
+                logger.info("Persona obtenida por su Número de Documento");
+                return new ResponseWrapper<>(person, "Persona encontrada por Número de Documento correctamente");
+            }
+
+            logger.info("La persona no pudo ser encontrada con el Número de Documento {}", numberDocument);
+            return new ResponseWrapper<>(null, "La persona no pudo ser encontrado por el Número de Documento " + numberDocument);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener persona por Número de Documento, detalles ...", err);
+            return new ResponseWrapper<>(null, "La persona no pudo ser encontrado por el Número de Documento");
+
+        }
+
+    }
+
+    @Override
     @Transactional
     public ResponseWrapper<Person> update(Long id, UpdatePersonDto person) {
 

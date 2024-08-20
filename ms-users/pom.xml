@@ -83,6 +83,11 @@
 			<artifactId>springdoc-openapi-data-rest</artifactId>
 			<version>1.7.0</version>
 		</dependency>
+		<!-- Solo para encriptar la contraseña sin Spring Security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

@@ -31,7 +31,7 @@ public class User {
     @Comment("Número Documento de la persona (Referencia a MS Persons)")
     @Schema(description = "Número de Documento")
     @NotNull
-    private Long documentNumber;
+    private String documentNumber;
 
     @Column(name = "USERNAME", unique = true, nullable = false, length = 100 )
     @Comment("Usuario para cuenta")

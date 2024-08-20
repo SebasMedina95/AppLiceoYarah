@@ -14,6 +14,7 @@ public interface PersonService {
     ResponseWrapper<Person> create(CreatePersonDto person);
     Page<Person> findAll(String search, Pageable pageable);
     ResponseWrapper<Person> findById(Long id);
+    ResponseWrapper<Person> findByNumberDocument(String numberDocument);
     ResponseWrapper<Person> update(Long id, UpdatePersonDto person);
     ResponseWrapper<Person> delete(Long id);
     List<Long> findPersonIdsByCriteria(String search);
