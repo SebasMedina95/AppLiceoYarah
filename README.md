@@ -78,3 +78,10 @@ http://localhost:18883/business/swagger-ui/index.html
 properties, lo mismo el index.html según las configuraciones aplicadas. Tenga en cuenta
 esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
 
+---------------------------------------------------------------------------------------
+
+### Notas de actualización
+* **Última actualización:** Agosto 20/2024.
+* **Desarrollador:** Juan Sebastian Medina Toro.
+* **Contexto trabajo:** Elaboración Micro Servicios.
+
