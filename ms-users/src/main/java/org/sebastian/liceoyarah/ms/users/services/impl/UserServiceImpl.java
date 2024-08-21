@@ -249,15 +249,45 @@ public class UserServiceImpl implements UserService {
 
         }catch (Exception err){
 
-            logger.error("Ocurrió un error al intentar actualizar deportista por ID, detalles ...", err);
-            return new ResponseWrapper<>(null, "El deportista no pudo ser actualizado");
+            logger.error("Ocurrió un error al intentar actualizar usuario por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El usuario no pudo ser actualizado");
 
         }
 
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<User> delete(Long id) {
-        return null;
+
+        try{
+
+            Optional<User> userOptional = userRepository.findById(id);
+
+            if( userOptional.isPresent() ){
+
+                User userDb = userOptional.orElseThrow();
+
+                //? Vamos a actualizar si llegamos hasta acá
+                //? ESTO SERÁ UN ELIMINADO LÓGICO!
+                userDb.setStatus(false);
+                userDb.setUserUpdated("usuario123");
+                userDb.setDateUpdated(new Date());
+
+                return new ResponseWrapper<>(userRepository.save(userDb), "Usuario Eliminado Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "El usuario no fue encontrado");
+
+            }
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar eliminar lógicamente usuario por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El usuario no pudo ser eliminado");
+
+        }
+
     }
 }

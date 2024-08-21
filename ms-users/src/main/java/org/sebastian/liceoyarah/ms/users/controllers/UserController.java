@@ -307,4 +307,66 @@ public class UserController {
 
     }
 
+    @DeleteMapping("/delete-by-id/{id}")
+    @Operation(
+            summary = "Eliminar un usuario",
+            description = "Eliminar un usuario pero de manera lógica",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del usuario a eliminar", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario Eliminado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseCreate.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
+                    "El ID proporcionado para eliminar es inválido.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseCreateErrorGeneric.class))),
+    })
+    public ResponseEntity<ApiResponseConsolidation<User>> delete(
+            @PathVariable("id") String id
+    ){
+
+        ResponseWrapper<User> userUpdate;
+
+        try {
+            Long userId = Long.parseLong(id);
+            userUpdate = userService.delete(userId);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( userUpdate.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            userUpdate.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Usuario Eliminado Correctamente.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                userUpdate.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
 }
