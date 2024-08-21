@@ -182,7 +182,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseWrapper<User> findById(Long id) {
-        return null;
+
+        logger.info("Iniciando Acción - Obtener un deportista dado su ID");
+
+        try{
+
+            Optional<User> userOptional = userRepository.findById(id);
+
+            if( userOptional.isPresent() ){
+                User user = userOptional.orElseThrow();
+                logger.info("Usuario obtenido por su ID");
+
+                String personDocumentMs = user.getDocumentNumber();
+                Persons personData = getPersonMs.getPersonOfMsPersons(personDocumentMs);
+                user.setPerson(personData);
+
+                return new ResponseWrapper<>(user, "Usuario encontrado por ID correctamente");
+
+            }
+
+            logger.info("El usuario no pudo ser encontrado cone el ID {}", id);
+            return new ResponseWrapper<>(null, "El usuario no pudo ser encontrado por el ID " + id);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener usuario por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El usuario no pudo ser encontrado por el ID");
+
+        }
+
     }
 
     @Override

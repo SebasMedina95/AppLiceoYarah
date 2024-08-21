@@ -1,6 +1,8 @@
 package org.sebastian.liceoyarah.ms.users.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,10 +27,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -157,6 +156,71 @@ public class UserController {
                         LocalDateTime.now()
                 )
         ));
+
+    }
+
+    @GetMapping("/find-by-id/{id}")
+    @Operation(
+            summary = "Obtener usuario por ID",
+            description = "Obtener un usuario dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del deportista a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Deportista encontradO.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseCreateErrorGeneric.class)))
+            }
+    )
+    public ResponseEntity<ApiResponseConsolidation<Object>> findById(
+            @PathVariable("id") String id
+    ){
+
+        ResponseWrapper<User> user;
+
+        //Validamos que el ID que nos proporcionan por la URL sea válido
+        try {
+            Long userId = Long.parseLong(id);
+            user = userService.findById(userId);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado para la búsqueda es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( user.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            user.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Usuario obtenido por ID.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                user.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
 
     }
 
