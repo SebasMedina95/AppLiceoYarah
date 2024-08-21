@@ -3,7 +3,6 @@ package org.sebastian.liceoyarah.ms.users.services.impl;
 import feign.FeignException;
 import org.sebastian.liceoyarah.ms.users.clients.dtos.Persons;
 import org.sebastian.liceoyarah.ms.users.clients.requests.GetPersonMs;
-import org.sebastian.liceoyarah.ms.users.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.users.common.utils.ResponseWrapper;
 import org.sebastian.liceoyarah.ms.users.entities.User;
 import org.sebastian.liceoyarah.ms.users.entities.dtos.create.CreateUserDto;
@@ -18,9 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +27,6 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     static String dummiesUser = "usuario123";
-    private static final String DIGITS = "0123456789";
-    private static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private static final SecureRandom RANDOM = new SecureRandom();
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final UserRepository userRepository;
@@ -50,6 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<User> create(CreateUserDto user) {
 
         logger.info("Iniciando guardado de usuario - MS User");
@@ -135,6 +131,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<User> findAll(String search, Pageable pageable) {
 
         logger.info("Obtener todos los usuarios paginados y con filtro - MS User");
@@ -181,9 +178,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseWrapper<User> findById(Long id) {
 
-        logger.info("Iniciando Acción - Obtener un deportista dado su ID");
+        logger.info("Iniciando Acción - Obtener un deportista dado su ID - MS Users");
 
         try{
 
@@ -214,8 +212,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseWrapper<User> update(Long id, UpdateUserDto sportsMan) {
-        return null;
+    @Transactional
+    public ResponseWrapper<User> update(Long id, UpdateUserDto user) {
+
+        logger.info("Iniciando Acción - Actualizar un usuario dado su ID - MS Users");
+
+        try{
+
+            Optional<User> userOptional = userRepository.findById(id);
+            if( userOptional.isPresent() ){
+
+                User userDb = userOptional.orElseThrow();
+
+                //? Verificamos para no repetir email
+                Optional<User> optionalGetByEmail = userRepository.getUserByEmailForEdit(user.getEmail(), id);
+
+                if( optionalGetByEmail.isPresent() ){
+                    logger.info("El usuario no se puede actualizar porque el email ya se encuentra registrado");
+                    return new ResponseWrapper<>(null, "El usuario ya está registrado a nivel de email");
+                }
+
+                //? Vamos a actualizar si llegamos hasta acá
+                userDb.setEmail(user.getEmail());
+                userDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
+                userDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
+
+                logger.info("El usuario fue actualizado correctamente");
+                return new ResponseWrapper<>(userRepository.save(userDb), "Usuario Actualizado Correctamente");
+
+            }else{
+
+                logger.warn("El usuario por el ID no fue encontrado");
+                return new ResponseWrapper<>(null, "El usuario no fue encontrado");
+
+            }
+
+        }catch (Exception err){
+
+            logger.error("Ocurrió un error al intentar actualizar deportista por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El deportista no pudo ser actualizado");
+
+        }
+
     }
 
     @Override

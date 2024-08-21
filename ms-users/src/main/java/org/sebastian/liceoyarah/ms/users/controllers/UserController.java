@@ -17,6 +17,7 @@ import org.sebastian.liceoyarah.ms.users.common.utils.ErrorsValidationsResponse;
 import org.sebastian.liceoyarah.ms.users.common.utils.ResponseWrapper;
 import org.sebastian.liceoyarah.ms.users.entities.User;
 import org.sebastian.liceoyarah.ms.users.entities.dtos.create.CreateUserDto;
+import org.sebastian.liceoyarah.ms.users.entities.dtos.update.UpdateUserDto;
 import org.sebastian.liceoyarah.ms.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -164,10 +165,10 @@ public class UserController {
             summary = "Obtener usuario por ID",
             description = "Obtener un usuario dado el ID",
             parameters = {
-                    @Parameter(name = "id", description = "ID del deportista a obtener", required = true, in = ParameterIn.PATH)
+                    @Parameter(name = "id", description = "ID del usuario a obtener", required = true, in = ParameterIn.PATH)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Deportista encontradO.",
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = UserResponseCreate.class))),
                     @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
@@ -217,6 +218,88 @@ public class UserController {
                         null,
                         new ApiResponseConsolidation.Meta(
                                 user.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
+    @PutMapping("update-by-id/{id}")
+    @Operation(
+            summary = "Actualizar un usuario",
+            description = "Actualizar un usuario dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID para la actualización", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario Actualizado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseCreate.class))),
+            @ApiResponse(responseCode = "406", description = "Errores en los campos de creación.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseCreateErrorFields.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
+                    "La persona ya se encuentra asociada como usuario.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserResponseCreateErrorGeneric.class))),
+    })
+    public ResponseEntity<ApiResponseConsolidation<Object>> update(
+            @Valid
+            @RequestBody UpdateUserDto userRequest,
+            BindingResult result,
+            @PathVariable("id") String id
+    ){
+
+        if(result.hasFieldErrors()){
+            ErrorsValidationsResponse errors = new ErrorsValidationsResponse();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            errors.validation(result),
+                            new ApiResponseConsolidation.Meta(
+                                    "Errores en los campos de actualización",
+                                    HttpStatus.BAD_REQUEST.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        ResponseWrapper<User> userUpdate;
+
+        //Validamos que el ID de la URL sea válido
+        try {
+            Long userId = Long.parseLong(id);
+            userUpdate = userService.update(userId, userRequest);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( userUpdate.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            userUpdate.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Usuario Actualizado Correctamente.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                userUpdate.getErrorMessage(),
                                 HttpStatus.BAD_REQUEST.value(),
                                 LocalDateTime.now()
                         )

@@ -13,10 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UpdateUserDto {
 
-    @NotEmpty(message = "El numero de documento de la persona es requerido")
-    @Size(min = 6, max = 30, message = "El numero de documento de la persona debe ser mínimo de 6 caracteres y máximo de 30")
-    private String documentNumber;
-
     @NotEmpty(message = "El email de la persona es requerido")
     @Size(min = 3, max = 150, message = "El email de la persona no debe sobrepasar los 150")
     private String email;
