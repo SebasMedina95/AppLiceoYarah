@@ -18,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -48,9 +50,25 @@ public class UserServiceImpl implements UserService {
 
         logger.info("Iniciando guardado de usuario - MS User");
 
-        //? Validar no repetición de correo
-        //TODO ...
+        //? Validar no repetición de email
+        Optional<User> emailOptional = userRepository.findByEmail(user.getEmail());
+        if( emailOptional.isPresent() ){
+            logger.error("No se puede crear el usuario, email ya existe: {}", user.getEmail());
+            return new ResponseWrapper<>(
+                    null, "El email " + user.getEmail() + " ya se encuentra registrado"
+            );
+        }
 
+        //? Validar no repetición de número de documento (Referencia MS Persons)
+        Optional<User> documentNumberOptional = userRepository.findByNumberDocument(user.getDocumentNumber());
+        if( documentNumberOptional.isPresent() ){
+            logger.error("No se puede crear el usuario, número de documento ya asociado como usuario: {}", user.getDocumentNumber());
+            return new ResponseWrapper<>(
+                    null, "El usuario con el documento " + user.getDocumentNumber() + " ya se encuentra registrado"
+            );
+        }
+
+        //? Procedemos a hacer extracción de data desde el MS por medio de Feign.
         Persons personData;
         String personDocumentMs = user.getDocumentNumber();
         try{
@@ -71,27 +89,44 @@ public class UserServiceImpl implements UserService {
             );
         }
 
-        logger.info("Resultado => ", personData.getFirstName());
-
         //? Generar username
-        //TODO ...
+        //Tomamos el documento + primer nombre
+        String username = personData.getDocumentNumber().trim() + personData.getFirstName().trim();
 
         //* Validar que no se repita username
-        //TODO ...
+        Optional<User> userOptional = userRepository.findByUserName(username);
+        if( userOptional.isPresent() ){
+            logger.error("No se puede crear el usuario, username ya existe: {}", username);
+            return new ResponseWrapper<>(
+                    null, "El usuario con el username " + username + " ya se encuentra registrado"
+            );
+        }
 
         //? Generar contraseña
-        //TODO ...
-
-        //* Encriptar la contraseña
-        //TODO ...
+        // Por facilidad de pruebas el mismo username
+        String encodedPassword = passwordEncoder.encode(username);
 
         //? Guardar usuario
-        //TODO ...
+        User newUser = new User();
+        newUser.setDocumentNumber(user.getDocumentNumber().trim());
+        newUser.setEmail(user.getEmail().toLowerCase().trim());
+        newUser.setUsername(username);
+        newUser.setPassword(encodedPassword);
+        newUser.setStatus(true); //* Por defecto entra en true
+        newUser.setUserCreated(dummiesUser); //! Ajustar cuando se implemente Security
+        newUser.setDateCreated(new Date()); //! Ajustar cuando se implemente Security
+        newUser.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
+        newUser.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
 
         //? Enviar email de credenciales
         //TODO ...
 
-        return null;
+        //? Guardamos y devolvemos al usuario
+        logger.info("Usuario guardado correctamente");
+        return new ResponseWrapper<>(
+                userRepository.save(newUser),
+                "El usuario fue creado correctamente"
+        );
 
     }
 
