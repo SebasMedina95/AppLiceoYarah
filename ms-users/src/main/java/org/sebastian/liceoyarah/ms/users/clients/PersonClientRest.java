@@ -17,6 +17,6 @@ public interface PersonClientRest {
 
     //! Funcionalidad especial para la búsqueda por filtros
     @GetMapping("/find-by-search")
-    ApiResponseConsolidation<List<Long>> findPersonIdsByCriteria(@RequestParam("search") String search);
+    ApiResponseConsolidation<List<String>> findPersonDocumentsByCriteria(@RequestParam("search") String search);
 
 }

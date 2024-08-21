@@ -3,6 +3,7 @@ package org.sebastian.liceoyarah.ms.users.services.impl;
 import feign.FeignException;
 import org.sebastian.liceoyarah.ms.users.clients.dtos.Persons;
 import org.sebastian.liceoyarah.ms.users.clients.requests.GetPersonMs;
+import org.sebastian.liceoyarah.ms.users.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.users.common.utils.ResponseWrapper;
 import org.sebastian.liceoyarah.ms.users.entities.User;
 import org.sebastian.liceoyarah.ms.users.entities.dtos.create.CreateUserDto;
@@ -13,12 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -132,7 +136,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> findAll(String search, Pageable pageable) {
-        return null;
+
+        logger.info("Obtener todos los usuarios paginados y con filtro - MS User");
+
+        // Si tenemos criterio de búsqueda entonces hacemos validaciones
+        Page<User> userPage;
+        List<String> personDocuments;
+        if (search != null && !search.isEmpty()) {
+
+            // Buscamos primero en el MS de personas para traer la información que coincida con el criterio
+            logger.info("Obtener todos los usuarios - Con criterio de búsqueda en MS Persons y Users");
+            personDocuments = getPersonMs.getListPersonOfMsPersonsByCriterial(search);
+
+            // Ahora realizamos la búsqueda en este MS tanto con los ID hallados desde MS de Personas como
+            // con la posibilidad de que también haya un criterio adicional de coincidencia acá.
+            logger.info("Obtener todos los deportistas - Aplicando la paginación luego de filtro");
+            userPage = userRepository.findFilteredUser(search, personDocuments, pageable);
+
+        }else{
+
+            // Si llegamos a este punto paginamos normal sin el buscador.
+            logger.info("Obtener todos los deportistas - Sin criterio de búsqueda");
+            userPage = userRepository.findNoFilteredUser(pageable);
+
+        }
+
+        // Ajustamos los elementos hallados en el content para que aparezcan junto con la información
+        // que viene desde el MS de personas.
+        logger.info("Aplicamos contra llamado a MS Persons para adecuar response a Frontend");
+        List<User> userDtos = userPage.getContent().stream()
+                .map(user -> {
+                    String personDocument = user.getDocumentNumber();
+                    Persons person = getPersonMs.getPersonOfMsPersons(personDocument);
+                    user.setPerson(person);
+                    return user;
+                })
+                .toList();
+
+        // Retornamos los elementos con la paginación y filtro aplicado.
+        logger.info("Listado de personas obtenido con toda la data requerida");
+        return new PageImpl<>(userDtos, pageable, userPage.getTotalElements());
+
+
     }
 
     @Override

@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
+import java.util.List;
+
 @Configuration
 public class GetPersonMs {
 
@@ -37,6 +40,25 @@ public class GetPersonMs {
         }catch (FeignException fe){
             logger.error("No pudimos obtener la persona del MS Persons, error: ", fe);
             return null;
+        }
+
+    }
+
+    public List<String> getListPersonOfMsPersonsByCriterial(String documentPerson){
+
+        try{
+
+            //? Ahora hallemos la persona en su MS
+            List<String> personData;
+            ApiResponseConsolidation<List<String>> personMsvc =
+                    personClientRest.findPersonDocumentsByCriteria(documentPerson);
+            personData = personMsvc.getData();
+
+            return personData;
+
+        }catch (FeignException fe){
+            logger.error("No pudimos obtener la persona del MS Persons, error: ", fe);
+            return Collections.emptyList();
         }
 
     }
