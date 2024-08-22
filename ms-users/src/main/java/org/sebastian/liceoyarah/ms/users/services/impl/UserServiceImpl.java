@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
         if( emailOptional.isPresent() ){
             logger.error("No se puede crear el usuario, email ya existe: {}", user.getEmail());
             return new ResponseWrapper<>(
-                    null, "El email " + user.getEmail() + " ya se encuentra registrado"
+                    null, "El email " + user.getEmail() + " ya se encuentra registrado a nivel de email"
             );
         }
 
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
         if( documentNumberOptional.isPresent() ){
             logger.error("No se puede crear el usuario, número de documento ya asociado como usuario: {}", user.getDocumentNumber());
             return new ResponseWrapper<>(
-                    null, "El usuario con el documento " + user.getDocumentNumber() + " ya se encuentra registrado"
+                    null, "El usuario con el documento " + user.getDocumentNumber() + " ya se encuentra registrado a nivel de documento"
             );
         }
 
