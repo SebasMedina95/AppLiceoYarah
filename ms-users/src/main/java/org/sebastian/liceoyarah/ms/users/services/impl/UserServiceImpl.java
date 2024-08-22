@@ -8,6 +8,7 @@ import org.sebastian.liceoyarah.ms.users.entities.User;
 import org.sebastian.liceoyarah.ms.users.entities.dtos.create.CreateUserDto;
 import org.sebastian.liceoyarah.ms.users.entities.dtos.update.UpdateUserDto;
 import org.sebastian.liceoyarah.ms.users.repositories.UserRepository;
+import org.sebastian.liceoyarah.ms.users.services.EmailService;
 import org.sebastian.liceoyarah.ms.users.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,16 +33,19 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final GetPersonMs getPersonMs;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
     @Autowired
     public UserServiceImpl(
             UserRepository userRepository,
             GetPersonMs getPersonMs,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            EmailService emailService
     ){
         this.userRepository = userRepository;
         this.getPersonMs = getPersonMs;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Override
@@ -118,13 +122,17 @@ public class UserServiceImpl implements UserService {
         newUser.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
         newUser.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
 
+        User saveUser = userRepository.save(newUser);
+
         //? Enviar email de credenciales
-        //TODO ...
+        String email = saveUser.getEmail();
+        String[] emailArray = { email };
+        emailService.sendMail(emailArray, "Credenciales Liceo Yarah", saveUser.getUsername(), saveUser.getUsername());
 
         //? Guardamos y devolvemos al usuario
         logger.info("Usuario guardado correctamente");
         return new ResponseWrapper<>(
-                userRepository.save(newUser),
+                saveUser,
                 "El usuario fue creado correctamente"
         );
 
