@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "yarah-ms-persons", url = "localhost:18881/business/v1/api/persons")
+//Como vamos a hacer una comunicación entre contenedores locales, ya no sería localhost,
+//usamos el host.docker.internal que nos ayuda como una especie de DNS para conectarnos,
+//entonces, cambiamos el localhost por host.docker.internal
+@FeignClient(name = "yarah-ms-persons", url = "host.docker.internal:18881/business/v1/api/persons")
 public interface PersonClientRest {
 
     @GetMapping("/find-by-document/{documentNumber}")

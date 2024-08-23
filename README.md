@@ -79,9 +79,43 @@ properties, lo mismo el index.html según las configuraciones aplicadas. Tenga e
 esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
 
 ---------------------------------------------------------------------------------------
+### Construcción de imágenes de Docker
+Antes de comenzar, debemos tener a consideración que con Docker debemos manejar el
+tema del localhost diferente. Recordemos que ahora, trabajando entre los contenedores de 
+Docker ya no usamos directamente al localhost, sino que debemos conectarnos al local de 
+los contenedores, por eso, en el código tenemos que configurar las URLs en vez de localhost 
+con ``host.docker.internal``.
+
+Ahora, para continuar con el proceso de dockerización de las aplicaciones debemos tener 
+los JAR generados. En este caso, para poder generarlos sin complicaciones en vista de por 
+local nos tira problemas al hacer clean-compile-install por las imagenes/contenedores de 
+Docker, nos saltamos la parte de las pruebas y solo empaquetamos el JAR, para ello, 
+ubicados en el proyecto donde veamos el ``mvnw`` usamos el comando:
+````dockerfile
+.\mvnw clean package -DskipTests
+````
+Este comando lo que hará es empaquetar el JAR y tenerlo listo para usar.
+Ahora, nos ubicamos en la proyecto, donde podemos ver que en la raíz se encuentra el Dockerfile,
+en este punto debemos ejecutar el comando:
+````dockerfile
+docker build -t liceoyarah-ms-persons:latest .
+````
+Lo que queremos decir es que construya una imagen a partir del Dockerfile, el . nos indica
+que estamos en la raíz del proyecto en ubicación. El -t más el liceoyarah-ms-persons:latest 
+nos indica el nombre que le daremos a la imagen, así como también el latest es para referir 
+la última versión de la imagen generada.
+Ahora, debemos correr la imagen usando el comando:
+````dockerfile
+docker run -p 18881:18881 --name liceoyarah-ms-persons-container 04381f1995bf
+````
+Ten en cuenta que ``04381f1995bf`` es el ID de la imagen que se nos creo anteriormente, este
+valor podría variar por supuesto entre máquinas. Debemos definir el puerto con ``-p`` para
+poder comunicarnos desde el exterior y con ``--name`` le damos un nombre para que Docker no lo
+asigne de manera aleatoria, quedando más personalizada.
+---------------------------------------------------------------------------------------
 
 ### Notas de actualización
-* **Última actualización:** Agosto 20/2024.
+* **Última actualización:** Agosto 23/2024.
 * **Desarrollador:** Juan Sebastian Medina Toro.
 * **Contexto trabajo:** Elaboración Micro Servicios.
 
