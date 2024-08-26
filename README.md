@@ -80,6 +80,14 @@ esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
 
 ---------------------------------------------------------------------------------------
 ### Construcción de imágenes de Docker
+`NOTA IMPORTANTE, ANTES DE LEER ESTE APARTADO, VERIFIQUE PRIMERO EL APARTADO SIGUIENTE
+DONDE HABLAMOS DE LAS OPTIMIZACIONES, PUESTO QUE, A MEDIDA QUE SE FUE AVANZANDO EN EL 
+DESARROLLO, SE FUERON OPTIMIZANDO LAS IMAGENES ASÍ COMO LOS ARCHIVOS DE DOCKER Y POR TANTO, 
+LO QUE TOMABA 2 O 3 PASOS O INCLUSO MÁS, SE HA REDUCIDO A MÁS POCOS PASOS Y COMANDOS MÁS 
+PERSONALIZADOS PARA ESO.
+ENTONCES, ANTES DE CONTINUAR EN ESTE PUNTO REVISE LAS OPTIMIZACIONES, EN PRELACIÓN A ELLO,
+SE DEJA ESTE APARTADO COMO DOCUMENTACIÓN ÚTIL.`
+---------------------------------------------------------------------------------------
 Antes de comenzar, debemos tener a consideración que con Docker debemos manejar el
 tema del localhost diferente. Recordemos que ahora, trabajando entre los contenedores de 
 Docker ya no usamos directamente al localhost, sino que debemos conectarnos al local de 
@@ -96,7 +104,7 @@ ubicados en el proyecto donde veamos el ``mvnw`` usamos el comando:
 ````
 Este comando lo que hará es empaquetar el JAR y tenerlo listo para usar.
 Ahora, nos ubicamos en la proyecto, donde podemos ver que en la raíz se encuentra el Dockerfile,
-en este punto debemos ejecutar el comando:
+en este punto debemos ejecutar el comando para construir la imagen:
 ````dockerfile
 docker build -t liceoyarah-ms-persons:latest .
 ````
@@ -104,7 +112,7 @@ Lo que queremos decir es que construya una imagen a partir del Dockerfile, el . 
 que estamos en la raíz del proyecto en ubicación. El -t más el liceoyarah-ms-persons:latest 
 nos indica el nombre que le daremos a la imagen, así como también el latest es para referir 
 la última versión de la imagen generada.
-Ahora, debemos correr la imagen usando el comando:
+Ahora, debemos construir el contenedor a partir de la imagen usando el comando:
 ````dockerfile
 docker run -p 18881:18881 --name liceoyarah-ms-persons-container 04381f1995bf
 ````
@@ -112,10 +120,31 @@ Ten en cuenta que ``04381f1995bf`` es el ID de la imagen que se nos creo anterio
 valor podría variar por supuesto entre máquinas. Debemos definir el puerto con ``-p`` para
 poder comunicarnos desde el exterior y con ``--name`` le damos un nombre para que Docker no lo
 asigne de manera aleatoria, quedando más personalizada.
+`Recordemos en el paso anterior que en vez de un ID de imagen como 04381f1995bf podemos usar
+el nombre de la imagen, por ejemplo, para el MS Persons usamos el nombre de tag cuando se
+generó la imagen de liceoyarah-ms-persons, podemos usar este nombre y también obtendríamos
+el mismo resultado, más legible incluso`.
 ---------------------------------------------------------------------------------------
+### Optimizaciones de Imágenes/Contenedores Docker
+``NOTA RECORDATORIA: Recordemos ubicarnos dentro del respectivo micro servicio``
+1. Primeramente, requeriamos generar primero el JAR ants de hacer los pasos de Docker, pues
+el JAR contenía el proyecto en pocas palabras, ahora, no necesitamos dos comandos sino solo
+1, el cual genera el JAR y al mismo tiempo generará la imagen correspondiente gracias a unos
+ajustes realizados en el Dockerfile, ahora, el comando es:
+````dockerfile
+docker build -t liceoyarah-ms-persons-image:latest . -f .\Dockerfile
+````
+El anterior comando construye la imagen, el ``-t`` me permite dar un nombre, el ``.`` permite
+generar a nivel de raíz la locación y el ``-f`` apuntar al archivo de configuración, que como
+estamos trabajando los micro servicios independientes a pesar de usar un mono repo, decimos
+que es el Dockerfile de la raíz el que usaremos. Ahora, una vez generada correctamente la
+imagen, podríamos ejecutar el comando para crear el contenedor:
+````dockerfile
+docker run -p 18881:18881 --name liceoyarah-ms-persons-container liceoyarah-ms-persons-image
+````
 
 ### Notas de actualización
-* **Última actualización:** Agosto 23/2024.
+* **Última actualización:** Agosto 26/2024.
 * **Desarrollador:** Juan Sebastian Medina Toro.
 * **Contexto trabajo:** Elaboración Micro Servicios.
 
