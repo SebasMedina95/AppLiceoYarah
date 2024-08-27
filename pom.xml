@@ -12,6 +12,7 @@
     <modules>
         <module>ms-persons</module>
         <module>ms-users</module>
+        <module>ms-students</module>
     </modules>
 
     <properties>
