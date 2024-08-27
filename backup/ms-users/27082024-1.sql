@@ -1,0 +1,10 @@
+INSERT INTO public.tbl_users (date_created,date_updated,document_person,email,"password",status,user_created,user_updated,username) VALUES
+	 ('2024-08-21 11:48:08.043','2024-08-21 11:48:08.043','1220111287','elsebascarasca245@correo.com','$2a$10$cPXO9U9TtBPDBNINRPYmJet5GY/Q8prW5FeeoeZ8QIleG3lRZ7tc6',true,'usuario123','usuario123','1220111287Sebastian'),
+	 ('2024-08-21 12:10:14.918','2024-08-21 12:10:14.918','1290128192','nataherrera124@correo.com','$2a$10$iJn8LuQR0stjZvP/0xoxPuluPMOOJWB8EWwKnIf6VhvEXgp.Lg2Hm',true,'usuario123','usuario123','1290128192Natalia'),
+	 ('2024-08-21 12:11:03.578','2024-08-21 12:11:03.578','1211901211','vanecarras24@correo.com','$2a$10$USkhduqyJ6Q3WZGQ23DYjOYn3jCcIKtkK5aiO0UnO6emGOYOJ0rNq',true,'usuario123','usuario123','1211901211Vanessa'),
+	 ('2024-08-21 14:46:07.609','2024-08-21 14:46:07.609','1182000912','danibasti429@correo.com','$2a$10$dYHjFocf4YtmVI2ra8qf2edg6jvX.12cm66590/w9uPsf27faIibO',true,'usuario123','usuario123','1182000912Daniela'),
+	 ('2024-08-21 12:09:59.413','2024-08-21 17:01:37.235','1200121981','correo-update@correo.com','$2a$10$roXqUVNv7SQzGcIVIRw.gelNddlruiY7/2CKXcJX9s1jsr5rUhary',true,'usuario123','usuario123','1200121981Juan'),
+	 ('2024-08-22 15:16:17.467','2024-08-22 15:16:17.467','1210999012','jsebastian19952011@gmail.com','$2a$10$CSu9Vj2SZcrvChqpDgJdFuNjZbZ/PyDhLP2Sv8M/xDmm08u0l7mMe',true,'usuario123','usuario123','1210999012Juan'),
+	 ('2024-08-22 17:20:08.41','2024-08-22 17:20:08.41','1000922201','f.dejesus.medinahenao1957@gmail.com','$2a$10$03AKwyyzOnH7tAh6EnQqBu9uBuOEQpavYZo8uiWgLeZCK8IjQRMau',true,'usuario123','usuario123','1000922201Fabio'),
+	 ('2024-08-23 18:31:10.106','2024-08-23 18:31:10.106','1001281929','m.ceciliatoro1973@gmail.com','$2a$10$ncaRHtznXQruV4qSBH5pCuai7XTo8scXuP5bh/HPXJsS1swBUPCBq',true,'usuario123','usuario123','1001281929Monica'),
+	 ('2024-08-27 00:30:10.464','2024-08-27 00:30:10.464','1200912182','parraolartejoeldejesus@gmail.com','$2a$10$yrnwQkF/t0whR5i2lNo62eJ96Sd38AImEqQ5einUQo6hKcCkql5Cu',true,'usuario123','usuario123','1200912182Joel');
