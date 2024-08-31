@@ -24,7 +24,6 @@ public class MailConfiguration {
     @PostConstruct
     public void init() {
         logger.info("Email Username: {}", emailUsername);
-        logger.info("Email Password: {}", emailPassword);
     }
 
     @Bean
