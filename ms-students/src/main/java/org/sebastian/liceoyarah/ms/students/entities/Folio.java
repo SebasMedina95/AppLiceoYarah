@@ -44,6 +44,11 @@ public class Folio {
     @NotNull
     private Boolean status;
 
+    @Column(name = "DESCRIPTION", nullable = true, length = 1000 )
+    @Comment("Anotaciones adicionales de la persona")
+    @Schema(description = "Descripciones adicionales de la Persona")
+    private String description;
+
     @Column(name = "USER_CREATED", nullable = true, length = 100 )
     @Comment("Usuario que creó")
     @Schema(defaultValue = "123456789", description = "Usuario que creó al Folio")

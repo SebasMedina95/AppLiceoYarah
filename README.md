@@ -74,9 +74,15 @@ http://localhost:18882/business/swagger-ui/index.html
 http://localhost:18883/business/swagger-ui/index.html
 ````
 
-**Nota:** Tener en cuenta que el puerto puede variar según las configuraciones de las 
+``Es importante destacar también que el host y el puerto para trabajar
+en local host **SIN DOCKER** ES localhost:5432, EN EL PROPERTIES HACEMOS
+EL AJUSTE PARA TRABAJAR, LA IDEA ES GENERAR LAS IMÁGENES DE DOCKER Y AL
+TENERLAS DESPLEGADAS SOLO TRABAJAR CON ELLAS Y EN LOCAL EL MS QUE SE ESTE
+ELABORANDO EN EL MOMENTO DETERMINADO``\
+**Nota adicional:** Tener en cuenta que el puerto puede variar según las configuraciones de las 
 properties, lo mismo el index.html según las configuraciones aplicadas. Tenga en cuenta
 esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
+
 
 ---------------------------------------------------------------------------------------
 ### Construcción de imágenes de Docker
@@ -127,10 +133,11 @@ el mismo resultado, más legible incluso`.
 ---------------------------------------------------------------------------------------
 ### Optimizaciones de Imágenes/Contenedores Docker
 ``NOTA RECORDATORIA: Recordemos ubicarnos dentro del respectivo micro servicio``
-1. Primeramente, requeriamos generar primero el JAR ants de hacer los pasos de Docker, pues
+1. Primeramente, requeriamos generar primero el JAR antes de hacer los pasos de Docker, pues
 el JAR contenía el proyecto en pocas palabras, ahora, no necesitamos dos comandos sino solo
 1, el cual genera el JAR y al mismo tiempo generará la imagen correspondiente gracias a unos
-ajustes realizados en el Dockerfile, ahora, el comando es:
+ajustes realizados en el Dockerfile, ahora, el comando es (**No olvide pararse en el proyecto
+correspondiente para realizar la ejecución del comando**):
 ````dockerfile
 docker build -t liceoyarah-ms-persons-image:latest . -f .\Dockerfile
 ````
@@ -144,7 +151,7 @@ docker run -p 18881:18881 --name liceoyarah-ms-persons-container liceoyarah-ms-p
 ````
 
 ### Notas de actualización
-* **Última actualización:** Agosto 26/2024.
+* **Última actualización:** Agosto 28/2024.
 * **Desarrollador:** Juan Sebastian Medina Toro.
 * **Contexto trabajo:** Elaboración Micro Servicios.
 
