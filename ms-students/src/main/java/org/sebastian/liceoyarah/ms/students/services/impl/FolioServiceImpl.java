@@ -71,7 +71,13 @@ public class FolioServiceImpl implements FolioService {
     @Override
     @Transactional(readOnly = true)
     public Page<Folio> findAll(String search, Pageable pageable) {
-        return null;
+
+        logger.info("Iniciando Acción - MS Students - Obtener todos los folios paginados y con filtro");
+        Page<Folio> folios = folioRepository.findGeneralFolioByCriteria(search, pageable);
+
+        logger.info("Listado de folios obtenido");
+        return folios;
+
     }
 
     @Override
