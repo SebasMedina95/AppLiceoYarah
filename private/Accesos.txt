@@ -1,2 +1,0 @@
-MAIL_USERNAME=jsebastian19952011@gmail.com
-MAIL_PASSWORD=fxdv lkoi bwnd hgdb
