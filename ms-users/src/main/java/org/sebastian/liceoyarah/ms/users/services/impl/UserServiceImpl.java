@@ -125,9 +125,18 @@ public class UserServiceImpl implements UserService {
         User saveUser = userRepository.save(newUser);
 
         //? Enviar email de credenciales
-        String email = saveUser.getEmail();
-        String[] emailArray = { email };
-        emailService.sendMail(emailArray, "Credenciales Liceo Yarah", saveUser.getUsername(), saveUser.getUsername());
+        try{
+            String email = saveUser.getEmail();
+            String[] emailArray = { email };
+            emailService.sendMail(
+                    emailArray,
+                    "Credenciales Liceo Yarah",
+                    saveUser.getUsername(),
+                    saveUser.getUsername()
+            );
+        }catch (Exception ex){
+            logger.warn("No se pudo enviar el email, revise variables de propiedad: %d", ex);
+        }
 
         //? Guardamos y devolvemos al usuario
         logger.info("Usuario guardado correctamente");
