@@ -27,4 +27,11 @@ public interface FolioRepository extends JpaRepository<Folio, Long>, JpaSpecific
             Pageable pageable
     );
 
+    @Query("SELECT f FROM Folio f WHERE (UPPER(f.numberFolio) = UPPER(:numberFolio)) " +
+            "AND f.id <> :id")
+    Optional<Folio> getFolioOptionalByNumberForEdit(
+            @Param("numberFolio") String numberFolio,
+            @Param("id") Long id
+    );
+
 }

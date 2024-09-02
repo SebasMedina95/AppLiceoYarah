@@ -241,6 +241,24 @@ public class FolioController {
     }
 
     @PutMapping("update-by-id/{id}")
+    @Operation(
+            summary = "Actualizar un folio",
+            description = "Actualizar un folio dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID para la actualización", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Folio Actualizado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreate.class))),
+            @ApiResponse(responseCode = "406", description = "Errores en los campos de actualización.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreateErrorFields.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreateErrorGeneric.class))),
+    })
     public ResponseEntity<ApiResponseConsolidation<Object>> update(
             @Valid
             @RequestBody UpdateFolioDto folioRequest,
@@ -285,7 +303,7 @@ public class FolioController {
                     .body(new ApiResponseConsolidation<>(
                             folioUpdate.getData(),
                             new ApiResponseConsolidation.Meta(
-                                    "Persona Actualizada Correctamente.",
+                                    "Folio Actualizado Correctamente.",
                                     HttpStatus.OK.value(),
                                     LocalDateTime.now()
                             )
@@ -305,6 +323,22 @@ public class FolioController {
     }
 
     @DeleteMapping("/delete-by-id/{id}")
+    @Operation(
+            summary = "Eliminar un folio",
+            description = "Eliminar un folio pero de manera lógica",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del folio a eliminar", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Persona Eliminada Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreate.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
+                    "El ID proporcionado para eliminar es inválido.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreateErrorGeneric.class))),
+    })
     public ResponseEntity<ApiResponseConsolidation<Folio>> delete(
             @PathVariable("id") String id
     ){
@@ -331,7 +365,7 @@ public class FolioController {
                     .body(new ApiResponseConsolidation<>(
                             folioUpdate.getData(),
                             new ApiResponseConsolidation.Meta(
-                                    "Persona Eliminada Correctamente.",
+                                    "Folio Eliminado Correctamente.",
                                     HttpStatus.OK.value(),
                                     LocalDateTime.now()
                             )

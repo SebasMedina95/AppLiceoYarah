@@ -414,7 +414,7 @@ public class PersonController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreate.class))),
             @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
-                    "El ID proporcionado para actualizar es inválido.",
+                    "El ID proporcionado para eliminar es inválido.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class))),
     })

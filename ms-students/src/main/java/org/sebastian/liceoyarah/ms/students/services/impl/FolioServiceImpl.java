@@ -111,12 +111,82 @@ public class FolioServiceImpl implements FolioService {
     @Override
     @Transactional
     public ResponseWrapper<Folio> update(Long id, UpdateFolioDto folio) {
-        return null;
+
+        logger.info("Iniciando Acción - MS Students - Actualizar un folio dado su ID");
+
+        try{
+
+            Optional<Folio> folioOptional = folioRepository.findById(id);
+            if( folioOptional.isPresent() ){
+
+                Folio folioDb = folioOptional.orElseThrow();
+
+                //? Validemos que no se repita la persona
+                String numberFolio = folio.getNumberFolio().trim().toUpperCase();
+                Optional<Folio> getFolioOptionalByNumber = folioRepository.getFolioOptionalByNumberForEdit(numberFolio, id);
+
+                if( getFolioOptionalByNumber.isPresent() ){
+                    logger.info("El folio no se puede actualizar porque el número de folio ya está registrado");
+                    return new ResponseWrapper<>(null, "El número de folio ya está registrado");
+                }
+
+                //? Vamos a actualizar si llegamos hasta acá
+                folioDb.setNumberFolio(numberFolio);
+                folioDb.setResolution(folio.getResolution());
+                folioDb.setDescription(folio.getDescription());
+                folioDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
+                folioDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
+
+                logger.info("El folio fue actualizado correctamente");
+                return new ResponseWrapper<>(folioRepository.save(folioDb), "Folio Actualizado Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "El folio no fue encontrado");
+
+            }
+
+        }catch (Exception err){
+
+            logger.error("Ocurrió un error al intentar actualizar folio por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El folio no pudo ser actualizada");
+
+        }
+
     }
 
     @Override
     @Transactional
     public ResponseWrapper<Folio> delete(Long id) {
-        return null;
+
+        try{
+
+            Optional<Folio> folioOptional = folioRepository.findById(id);
+
+            if( folioOptional.isPresent() ){
+
+                Folio folioDb = folioOptional.orElseThrow();
+
+                //? Vamos a actualizar si llegamos hasta acá
+                //? ESTO SERÁ UN ELIMINADO LÓGICO!
+                folioDb.setStatus(false);
+                folioDb.setUserUpdated("usuario123");
+                folioDb.setDateUpdated(new Date());
+
+                return new ResponseWrapper<>(folioRepository.save(folioDb), "Folio Eliminado Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "El folio no fue encontrado");
+
+            }
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar eliminar lógicamente folio por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El folio no pudo ser eliminada");
+
+        }
+
     }
 }
