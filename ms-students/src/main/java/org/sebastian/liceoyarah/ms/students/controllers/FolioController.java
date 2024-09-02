@@ -1,8 +1,16 @@
 package org.sebastian.liceoyarah.ms.students.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.sebastian.liceoyarah.ms.students.common.dtos.PaginationDto;
+import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreate;
+import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorFields;
+import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorGeneric;
 import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.students.common.utils.CustomPagedResourcesAssembler;
 import org.sebastian.liceoyarah.ms.students.common.utils.ErrorsValidationsResponse;
@@ -29,8 +37,8 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/v1/api/folios")
 @Tag(
-        name = "Controlador de MicroServicio Estudiantes - Folio",
-        description = "Operaciones relacionadas con el micro servicio de estudiantes - Folios"
+        name = "Controlador de Folios",
+        description = "Operaciones relacionadas con el micro servicio de estudiantes - Operaciones de Folios"
 )
 public class FolioController {
 
@@ -47,6 +55,18 @@ public class FolioController {
     }
 
     @PostMapping("/create")
+    @Operation(summary = "Crear un Folio", description = "Creación de un folio")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Folio Registrado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreate.class))),
+            @ApiResponse(responseCode = "406", description = "Errores en los campos de creación.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreateErrorFields.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: ",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseCreateErrorGeneric.class))),
+    })
     public ResponseEntity<ApiResponseConsolidation<Object>> create(
             @Valid
             @RequestBody CreateFolioDto folioRequest,

@@ -23,5 +23,6 @@ public class Users {
     private Date dateCreated;
     private String userUpdated;
     private Date dateUpdated;
+    private Persons person;
 
 }
