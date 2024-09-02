@@ -1,6 +1,8 @@
 package org.sebastian.liceoyarah.ms.students.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -8,9 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.sebastian.liceoyarah.ms.students.common.dtos.PaginationDto;
-import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreate;
-import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorFields;
-import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorGeneric;
+import org.sebastian.liceoyarah.ms.students.common.swagger.folios.*;
 import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.students.common.utils.CustomPagedResourcesAssembler;
 import org.sebastian.liceoyarah.ms.students.common.utils.ErrorsValidationsResponse;
@@ -63,7 +63,7 @@ public class FolioController {
             @ApiResponse(responseCode = "406", description = "Errores en los campos de creación.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = FolioResponseCreateErrorFields.class))),
-            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: ",
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = FolioResponseCreateErrorGeneric.class))),
     })
@@ -117,6 +117,25 @@ public class FolioController {
     }
 
     @PostMapping("/find-all")
+    @Operation(
+            summary = "Obtener todos los folios",
+            description = "Obtener todos los folios con paginación y también aplicando filtros",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos para la paginación y búsqueda",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationDto.class)
+                    )
+            )
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado de folios.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseList.class))),
+            @ApiResponse(responseCode = "400", description = "Errores en los campos de paginación.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FolioResponseListError.class)))
+    })
     public ResponseEntity<ApiResponseConsolidation<Object>> findAll(
             @Valid @RequestBody PaginationDto paginationDto,
             BindingResult result
@@ -157,6 +176,24 @@ public class FolioController {
     }
 
     @GetMapping("/find-by-id/{id}")
+    @Operation(
+            summary = "Obtener folio por ID",
+            description = "Obtener una persona dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del folio a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Folio encontrado.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = FolioResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Folio no encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = FolioResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = FolioResponseCreateErrorGeneric.class)))
+            }
+    )
     public ResponseEntity<ApiResponseConsolidation<Folio>> findById(
             @PathVariable("id") String id
     ){

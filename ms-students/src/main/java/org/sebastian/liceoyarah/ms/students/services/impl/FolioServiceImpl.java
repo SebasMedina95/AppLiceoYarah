@@ -83,7 +83,29 @@ public class FolioServiceImpl implements FolioService {
     @Override
     @Transactional(readOnly = true)
     public ResponseWrapper<Folio> findById(Long id) {
-        return null;
+
+        logger.info("Iniciando Acción - MS Students - Obtener un folio dado su ID");
+
+        try{
+
+            Optional<Folio> folioOptional = folioRepository.findById(id);
+
+            if( folioOptional.isPresent() ){
+                Folio folio = folioOptional.orElseThrow();
+                logger.info("Folio obtenido por su ID");
+                return new ResponseWrapper<>(folio, "Folio encontrado por ID correctamente");
+            }
+
+            logger.info("El folio no pudo ser encontrada cone el ID {}", id);
+            return new ResponseWrapper<>(null, "El folio no pudo ser encontrado por el ID " + id);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener folio por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El folio no pudo ser encontrado por el ID");
+
+        }
+
     }
 
     @Override
