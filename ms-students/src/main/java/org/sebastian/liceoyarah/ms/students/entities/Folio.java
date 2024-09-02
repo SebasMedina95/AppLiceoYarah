@@ -1,5 +1,6 @@
 package org.sebastian.liceoyarah.ms.students.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "TBL_FOLIOS")
@@ -18,6 +20,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @Schema(description = "Entidad que representa a los Folios en BD")
+@JsonIgnoreProperties({"students"})
 public class Folio {
 
     @Id
@@ -68,5 +71,8 @@ public class Folio {
     @Comment("Fecha actualización")
     @Schema(description = "Fecha actualización del Folio")
     private Date dateUpdated;
+
+    @OneToMany(mappedBy = "folio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Student> students;
 
 }
