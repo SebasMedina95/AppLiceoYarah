@@ -343,6 +343,35 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public ResponseWrapper<Student> delete(Long id) {
-        return null;
+
+        try{
+
+            Optional<Student> studentOptional = studentRepository.findById(id);
+
+            if( studentOptional.isPresent() ){
+
+                Student studentDb = studentOptional.orElseThrow();
+
+                //? Vamos a actualizar si llegamos hasta acá
+                //? ESTO SERÁ UN ELIMINADO LÓGICO!
+                studentDb.setStatus(false);
+                studentDb.setUserUpdated("usuario123");
+                studentDb.setDateUpdated(new Date());
+
+                return new ResponseWrapper<>(studentRepository.save(studentDb), "Estudiante Eliminado Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "El estudiante no fue encontrado");
+
+            }
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar eliminar lógicamente estudiante por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El estudiante no pudo ser eliminado");
+
+        }
+
     }
 }

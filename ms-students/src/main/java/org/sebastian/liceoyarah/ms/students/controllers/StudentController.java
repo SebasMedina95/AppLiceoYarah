@@ -312,10 +312,64 @@ public class StudentController {
     }
 
     @DeleteMapping("/delete-by-id/{id}")
+    @Operation(
+            summary = "Eliminar un estudiante",
+            description = "Eliminar un estudiante pero de manera lógica",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del estudiante a eliminar", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Estudiante Eliminado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseCreate.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class))),
+    })
     public ResponseEntity<ApiResponseConsolidation<Object>> delete(
             @PathVariable("id") String id
     ){
-        return null;
+
+        ResponseWrapper<Student> studentUpdate;
+
+        try {
+            Long studentId = Long.parseLong(id);
+            studentUpdate = studentService.delete(studentId);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( studentUpdate.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            studentUpdate.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Estudiante Eliminado Correctamente.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                studentUpdate.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
     }
 
 
