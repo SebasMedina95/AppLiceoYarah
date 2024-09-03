@@ -178,12 +178,42 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Page<Student> findAll(String search, Pageable pageable) {
+
         return null;
+
     }
 
     @Override
     public ResponseWrapper<Student> findById(Long id) {
-        return null;
+
+        logger.info("Iniciando Acción - Obtener un estudiante dado su ID - MS Students");
+
+        try{
+
+            Optional<Student> studentOptional = studentRepository.findById(id);
+
+            if( studentOptional.isPresent() ){
+                Student student = studentOptional.orElseThrow();
+                logger.info("Estudiante obtenido por su ID");
+
+                String userDocumentMs = student.getDocumentNumber();
+                Users userData = getUserMs.getPersonOfMsPersons(userDocumentMs);
+                student.setPerson(userData);
+
+                return new ResponseWrapper<>(student, "Estudiante encontrado por ID correctamente");
+
+            }
+
+            logger.info("El estudiante no pudo ser encontrado cone el ID {}", id);
+            return new ResponseWrapper<>(null, "El estudiante no pudo ser encontrado por el ID " + id);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener estudiante por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El estudiante no pudo ser encontrado por el ID");
+
+        }
+
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.sebastian.liceoyarah.ms.students.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,6 +12,8 @@ import jakarta.validation.Valid;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreate;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorFields;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorGeneric;
+import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseCreate;
+import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseCreateErrorGeneric;
 import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.students.common.utils.CustomPagedResourcesAssembler;
 import org.sebastian.liceoyarah.ms.students.common.utils.ErrorsValidationsResponse;
@@ -112,12 +116,74 @@ public class StudentController {
 
     @PostMapping("/find-all")
     public ResponseEntity<ApiResponseConsolidation<Object>> findAll(){
+
         return null;
+
     }
 
     @GetMapping("/find-by-id/{id}")
-    public ResponseEntity<ApiResponseConsolidation<Object>> findById(){
-        return null;
+    @Operation(
+            summary = "Obtener estudiante por ID",
+            description = "Obtener un estudiante dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del estudiante a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class)))
+            }
+    )
+    public ResponseEntity<ApiResponseConsolidation<Object>> findById(
+            @PathVariable("id") String id
+    ){
+
+        ResponseWrapper<Student> student;
+
+        //Validamos que el ID que nos proporcionan por la URL sea válido
+        try {
+            Long studentId = Long.parseLong(id);
+            student = studentService.findById(studentId);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado para la búsqueda es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( student.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            student.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Estudiante obtenido por ID.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                student.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
     }
 
     @PutMapping("update-by-id/{id}")
