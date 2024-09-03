@@ -9,11 +9,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.sebastian.liceoyarah.ms.students.common.dtos.PaginationDto;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreate;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorFields;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorGeneric;
 import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseCreate;
 import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseCreateErrorGeneric;
+import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseList;
+import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseListError;
 import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.students.common.utils.CustomPagedResourcesAssembler;
 import org.sebastian.liceoyarah.ms.students.common.utils.ErrorsValidationsResponse;
@@ -25,10 +28,17 @@ import org.sebastian.liceoyarah.ms.students.entities.dtos.create.CreateStudentDt
 import org.sebastian.liceoyarah.ms.students.services.FolioService;
 import org.sebastian.liceoyarah.ms.students.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 
@@ -115,9 +125,48 @@ public class StudentController {
     }
 
     @PostMapping("/find-all")
-    public ResponseEntity<ApiResponseConsolidation<Object>> findAll(){
+    @Operation(
+            summary = "Obtener todos los estudiantes",
+            description = "Obtener todos los estudiantes con paginación y también aplicando filtros",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos para la paginación y búsqueda",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationDto.class)
+                    )
+            )
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado de estudiantes.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseList.class))),
+            @ApiResponse(responseCode = "400", description = "Errores en los campos de paginación.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseListError.class)))
+    })
+    public ResponseEntity<ApiResponseConsolidation<Object>> findAll(
+            @Valid
+            @RequestBody PaginationDto paginationDto,
+            BindingResult result
+    ){
 
-        return null;
+        if (paginationDto.getPage() < 1) paginationDto.setPage(1); //Para controlar la página 0, y que la paginación arranque en 1.
+
+        Sort.Direction direction = paginationDto.getOrder().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(paginationDto.getPage() - 1, paginationDto.getSize(), Sort.by(direction, paginationDto.getSort())); //Generando el esquema de paginación para aplicar y ordenamiento
+        Page<Student> students = studentService.findAll(paginationDto.getSearch(), pageable); //Aplicando la paginación JPA -> Incorporo el buscador
+        UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri(); //Para la obtención de la URL
+
+        PagedModel<Student> pagedModel = customPagedResourcesAssembler.toModel(students, uriBuilder);
+
+        return ResponseEntity.ok(new ApiResponseConsolidation<>(
+                pagedModel,
+                new ApiResponseConsolidation.Meta(
+                        "Listado de estudiantes.",
+                        HttpStatus.OK.value(),
+                        LocalDateTime.now()
+                )
+        ));
 
     }
 

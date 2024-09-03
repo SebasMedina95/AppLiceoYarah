@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -177,13 +178,54 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Student> findAll(String search, Pageable pageable) {
 
-        return null;
+        logger.info("Obtener todos los estudiantes paginados y con filtro - MS User");
+
+        // Si tenemos criterio de búsqueda entonces hacemos validaciones
+        Page<Student> studentPage;
+        List<String> personDocuments;
+
+        if (search != null && !search.isEmpty()) {
+
+            // Buscamos primero en el MS de personas para traer la información que coincida con el criterio
+            logger.info("Obtener todos los usuarios - Con criterio de búsqueda en MS Persons y Users");
+            personDocuments = getPersonsMs.getListPersonOfMsPersonsByCriterial(search);
+
+            // Ahora realizamos la búsqueda en este MS tanto con los ID hallados desde MS de Personas como
+            // con la posibilidad de que también haya un criterio adicional de coincidencia acá.
+            logger.info("Obtener todos los deportistas - Aplicando la paginación luego de filtro");
+            studentPage = studentRepository.findFilteredStudent(search, personDocuments, pageable);
+
+        }else{
+
+            // Si llegamos a este punto paginamos normal sin el buscador.
+            logger.info("Obtener todos los deportistas - Sin criterio de búsqueda");
+            studentPage = studentRepository.findNoFilteredStudent(pageable);
+
+        }
+
+        // Ajustamos los elementos hallados en el content para que aparezcan junto con la información
+        // que viene desde el MS de personas.
+        logger.info("Aplicamos contra llamado a MS Persons para adecuar response a Frontend");
+        List<Student> userDtos = studentPage.getContent().stream()
+                .map(u -> {
+                    String personDocument = u.getDocumentNumber();
+                    Users user = getUserMs.getPersonOfMsPersons(personDocument);
+                    u.setPerson(user);
+                    return u;
+                })
+                .toList();
+
+        // Retornamos los elementos con la paginación y filtro aplicado.
+        logger.info("Listado de personas obtenido con toda la data requerida");
+        return new PageImpl<>(userDtos, pageable, studentPage.getTotalElements());
 
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseWrapper<Student> findById(Long id) {
 
         logger.info("Iniciando Acción - Obtener un estudiante dado su ID - MS Students");
@@ -217,11 +259,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Student> update(Long id, UpdateStudentDto student) {
         return null;
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Student> delete(Long id) {
         return null;
     }

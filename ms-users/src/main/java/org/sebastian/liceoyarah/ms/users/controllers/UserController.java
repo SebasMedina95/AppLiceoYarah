@@ -127,7 +127,7 @@ public class UserController {
             )
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Listado de deportistas.",
+            @ApiResponse(responseCode = "200", description = "Listado de usuarios.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponseList.class))),
             @ApiResponse(responseCode = "400", description = "Errores en los campos de paginación.",
