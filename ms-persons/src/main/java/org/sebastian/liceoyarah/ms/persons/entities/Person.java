@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -105,6 +106,11 @@ public class Person {
     @Schema(defaultValue = "Soltero", description = "Estado Civil de la Persona")
     @NotNull
     private String civilStatus;
+
+    @Column(name = "NACIMIENTO" )
+    @Comment("Nacimiento de la persona")
+    @Schema(description = "Fecha nacimiento de la persona")
+    private LocalDate birthDate;
 
     @Column(name = "STATUS" )
     @Comment("Estado eliminación lógica")

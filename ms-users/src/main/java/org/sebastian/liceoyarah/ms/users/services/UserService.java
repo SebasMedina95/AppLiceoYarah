@@ -12,6 +12,7 @@ public interface UserService {
     ResponseWrapper<User> create(CreateUserDto sportsMan);
     Page<User> findAll(String search, Pageable pageable);
     ResponseWrapper<User> findById(Long id);
+    ResponseWrapper<User> findByNumberDocument(Long documentNumber);
     ResponseWrapper<User> update(Long id, UpdateUserDto sportsMan);
     ResponseWrapper<User> delete(Long id);
 

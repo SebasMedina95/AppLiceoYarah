@@ -63,6 +63,7 @@ public class PersonServiceImpl implements PersonService {
             newPerson.setNeighborhood(person.getNeighborhood());
             newPerson.setDescription(person.getDescription());
             newPerson.setCivilStatus(person.getCivilStatus());
+            newPerson.setBirthDate(person.getBirthDate());
             newPerson.setStatus(true); //* Por defecto entra en true
             newPerson.setUserCreated(dummiesUser); //! Ajustar cuando se implemente Security
             newPerson.setDateCreated(new Date()); //! Ajustar cuando se implemente Security
@@ -184,6 +185,7 @@ public class PersonServiceImpl implements PersonService {
                 personDb.setNeighborhood(person.getNeighborhood());
                 personDb.setDescription(person.getDescription());
                 personDb.setCivilStatus(person.getCivilStatus());
+                personDb.setBirthDate(person.getBirthDate());
                 personDb.setStatus(true); //* Por defecto entra en true
                 personDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
                 personDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security

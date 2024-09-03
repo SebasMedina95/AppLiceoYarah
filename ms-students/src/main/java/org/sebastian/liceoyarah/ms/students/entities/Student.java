@@ -91,6 +91,7 @@ public class Student {
     @ManyToOne
     @JoinColumn(name = "FK_FOLIO")
     @JsonManagedReference
+    @Comment("Folio relacionado")
     private Folio folio;
 
     @Transient //No hace parte directa,no mapeado a la persistencia.

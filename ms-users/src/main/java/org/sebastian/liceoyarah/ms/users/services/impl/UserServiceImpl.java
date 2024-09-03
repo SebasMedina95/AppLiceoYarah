@@ -198,7 +198,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public ResponseWrapper<User> findById(Long id) {
 
-        logger.info("Iniciando Acción - Obtener un deportista dado su ID - MS Users");
+        logger.info("Iniciando Acción - Obtener un usuario dado su ID - MS Users");
 
         try{
 
@@ -223,6 +223,42 @@ public class UserServiceImpl implements UserService {
 
             logger.error("Ocurrió un error al intentar obtener usuario por ID, detalles ...", err);
             return new ResponseWrapper<>(null, "El usuario no pudo ser encontrado por el ID");
+
+        }
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseWrapper<User> findByNumberDocument(Long documentNumber) {
+
+        logger.info("Iniciando Acción - Obtener un usuario dado su Número Documento - MS Users");
+
+        try{
+
+            Optional<User> userOptional = userRepository.findByDocumentNumber(documentNumber.toString());
+
+            if( userOptional.isPresent() ){
+                User user = userOptional.orElseThrow();
+                logger.info("Usuario obtenido por su Número de Documento");
+
+                String personDocumentMs = user.getDocumentNumber();
+                Persons personData = getPersonMs.getPersonOfMsPersons(personDocumentMs);
+                user.setPerson(personData);
+
+                return new ResponseWrapper<>(user, "Usuario encontrado por Número de Documento correctamente");
+
+            }
+
+            logger.info("El usuario no pudo ser encontrado con el número de documento {}", documentNumber);
+            return new ResponseWrapper<>(
+                    null, "El usuario no pudo ser encontrado por el ID " + documentNumber);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener usuario por número de documento, detalles ...", err);
+            return new ResponseWrapper<>(
+                    null, "El usuario no pudo ser encontrado por el Número de Documento");
 
         }
 

@@ -225,6 +225,71 @@ public class UserController {
 
     }
 
+    @GetMapping("/find-by-document/{documentNumber}")
+    @Operation(
+            summary = "Obtener usuario por Documento",
+            description = "Obtener un usuario dado el Documento",
+            parameters = {
+                    @Parameter(name = "documentNumber", description = "Documento del usuario a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseCreateErrorGeneric.class)))
+            }
+    )
+    public ResponseEntity<ApiResponseConsolidation<Object>> findByNumberDocument(
+            @PathVariable("documentNumber") String documentNumber
+    ){
+
+        ResponseWrapper<User> user;
+
+        //Validamos que el ID que nos proporcionan por la URL sea válido
+        try {
+            Long userDocumentNumber = Long.parseLong(documentNumber);
+            user = userService.findByNumberDocument(userDocumentNumber);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El Documento proporcionado para la búsqueda es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( user.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            user.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Usuario obtenido por Número de Documento.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                user.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
     @PutMapping("update-by-id/{id}")
     @Operation(
             summary = "Actualizar un usuario",

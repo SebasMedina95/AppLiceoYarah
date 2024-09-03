@@ -19,6 +19,11 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
             @Param("id") Long id
     );
 
+    @Query("SELECT u FROM User u WHERE u.documentNumber = :documentNumber")
+    Optional<User> findByDocumentNumber(
+            @Param("documentNumber") String documentNumber
+    );
+
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.id <> :id")
     Optional<User> getUserByEmailForEdit(
             @Param("email") String email,

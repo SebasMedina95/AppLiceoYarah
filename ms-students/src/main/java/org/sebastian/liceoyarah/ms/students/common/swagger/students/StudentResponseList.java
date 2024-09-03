@@ -1,14 +1,14 @@
-package org.sebastian.liceoyarah.ms.students.common.swagger.folios;
+package org.sebastian.liceoyarah.ms.students.common.swagger.students;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import org.sebastian.liceoyarah.ms.students.entities.Folio;
+import org.sebastian.liceoyarah.ms.students.entities.Student;
 
 import java.util.List;
 
 @Data
-@Schema(description = "Respuesta con la lista paginada de folios")
-public class FolioResponseList {
+@Schema(description = "Respuesta con la lista paginada de estudiantes")
+public class StudentResponseList {
 
     @Schema(description = "Datos paginados de la respuesta")
     private PagedData data;
@@ -17,13 +17,13 @@ public class FolioResponseList {
     private Meta meta;
 
     @Data
-    @Schema(description = "Datos de paginación y lista de folios")
+    @Schema(description = "Datos de paginación y lista de estudiantes")
     public static class PagedData {
         @Schema(description = "Enlaces para paginación")
         private List<Link> links;
 
         @Schema(description = "Contenido de la respuesta")
-        private List<Folio> content;
+        private List<Student> content;
 
         @Schema(description = "Información de la página")
         private PageInfo page;

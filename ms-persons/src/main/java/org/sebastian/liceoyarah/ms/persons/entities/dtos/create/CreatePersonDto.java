@@ -1,11 +1,14 @@
 package org.sebastian.liceoyarah.ms.persons.entities.dtos.create;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -60,5 +63,8 @@ public class CreatePersonDto {
     @NotEmpty(message = "El estado civil de la persona es requerido")
     @Size(min = 5, max = 30, message = "El estado civil de la persona debe ser mínimo de 5 caracteres y máximo de 50")
     private String civilStatus;
+
+    @NotNull(message = "La fecha de nacimiento es requerido")
+    private LocalDate birthDate;
 
 }
