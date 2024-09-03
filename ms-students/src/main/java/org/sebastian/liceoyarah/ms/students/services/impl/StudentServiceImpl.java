@@ -149,9 +149,9 @@ public class StudentServiceImpl implements StudentService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 personChangeInString = objectMapper.writeValueAsString(personMap);
             } catch (JsonProcessingException e) {
-                logger.error("Error al convertir los acudiantes en un String válido");
+                logger.error("Error al convertir los acudiantes en un String válido para BD");
                 return new ResponseWrapper<>(
-                        null, "Error al convertir los acudiantes en un String válido"
+                        null, "Error al convertir los acudiantes en un String válido para BD"
                 );
             }
 
@@ -261,7 +261,83 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public ResponseWrapper<Student> update(Long id, UpdateStudentDto student) {
-        return null;
+
+        logger.info("Iniciando Acción - Actualizar un estudiante dado su ID - MS Students");
+        Optional<Student> studentOptional = studentRepository.findById(id);
+
+        if( studentOptional.isPresent() ){
+
+            Student studentDb = studentOptional.orElseThrow();
+
+            //? Validamos que el Folio proporcionado sea permitido
+            Optional<Folio> folioOptional = folioRepository.findById(student.getFolioId());
+            if( folioOptional.isEmpty() ){
+                logger.error("No se puede crear el estudiante, el folio no se ha encontrado con el ID: {}",
+                        student.getFolioId());
+                return new ResponseWrapper<>(
+                        null, "El folio con el ID " + student.getFolioId() +
+                        " no pudo ser hallado"
+                );
+            }
+
+            Folio getFolio = folioOptional.orElseThrow();
+
+            //? Debemos ajustar el/los responsables
+            List<String> personsCharge = student.getPersonsCharge();
+            Map<String, String> personMap = new HashMap<>();
+            for (String person : personsCharge) {
+
+                try {
+
+                    Persons getPersonForPersonCharge = getPersonsMs.getPersonOfMsPersons(person);
+                    String document = getPersonForPersonCharge.getDocumentNumber();
+
+                    //Un acudiente no puede ser estudiante
+                    Optional<Student> getStudentOptional = studentRepository.findByNumberDocument(document);
+                    if (getStudentOptional.isEmpty()) {
+                        String name =
+                                getPersonForPersonCharge.getFirstName() + " " +
+                                        getPersonForPersonCharge.getSecondName() + " " +
+                                        getPersonForPersonCharge.getFirstSurname() + " " +
+                                        getPersonForPersonCharge.getSecondSurname();
+                        personMap.put(document, name);
+                    }
+
+                } catch (Exception e) {
+                    logger.error("Error en MS Person o no se halló la persona con documento {}", person);
+                }
+            }
+
+            String personChangeInString;
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                personChangeInString = objectMapper.writeValueAsString(personMap);
+            } catch (JsonProcessingException e) {
+                logger.error("Error al convertir los acudiantes en un String válido");
+                return new ResponseWrapper<>(
+                        null, "Error al convertir los acudiantes en un String válido"
+                );
+            }
+
+            //? Vamos a actualizar si llegamos hasta acá
+            studentDb.setFolio(getFolio);
+            studentDb.setYearInscription(student.getYearInscription());
+            studentDb.setSpecialCondition(student.getSpecialCondition());
+            studentDb.setPersonsCharge(personChangeInString);
+            studentDb.setDescription(student.getDescription());
+            studentDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
+            studentDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
+
+            logger.info("El usuario fue actualizado correctamente");
+            return new ResponseWrapper<>(studentRepository.save(studentDb), "Estudiante Actualizado Correctamente");
+
+        }else{
+
+            logger.warn("El usuario por el ID no fue encontrado");
+            return new ResponseWrapper<>(null, "El usuario no fue encontrado");
+
+        }
+
     }
 
     @Override

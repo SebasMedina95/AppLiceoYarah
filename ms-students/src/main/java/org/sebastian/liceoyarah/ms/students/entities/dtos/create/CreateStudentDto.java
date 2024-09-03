@@ -16,7 +16,7 @@ import java.util.List;
 @Builder
 public class CreateStudentDto {
 
-    @NotNull(message = "El folio es requerida")
+    @NotNull(message = "El folio es requerido")
     private Long folioId;
 
     @NotEmpty(message = "El numero de documento del estudiante es requerido")

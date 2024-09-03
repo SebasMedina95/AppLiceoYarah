@@ -302,7 +302,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Usuario Actualizado Correctamente.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponseCreate.class))),
-            @ApiResponse(responseCode = "406", description = "Errores en los campos de creación.",
+            @ApiResponse(responseCode = "406", description = "Errores en los campos de actualización.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponseCreateErrorFields.class))),
             @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +

@@ -13,19 +13,14 @@ import org.sebastian.liceoyarah.ms.students.common.dtos.PaginationDto;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreate;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorFields;
 import org.sebastian.liceoyarah.ms.students.common.swagger.folios.FolioResponseCreateErrorGeneric;
-import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseCreate;
-import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseCreateErrorGeneric;
-import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseList;
-import org.sebastian.liceoyarah.ms.students.common.swagger.students.StudentResponseListError;
+import org.sebastian.liceoyarah.ms.students.common.swagger.students.*;
 import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
 import org.sebastian.liceoyarah.ms.students.common.utils.CustomPagedResourcesAssembler;
 import org.sebastian.liceoyarah.ms.students.common.utils.ErrorsValidationsResponse;
 import org.sebastian.liceoyarah.ms.students.common.utils.ResponseWrapper;
-import org.sebastian.liceoyarah.ms.students.entities.Folio;
 import org.sebastian.liceoyarah.ms.students.entities.Student;
-import org.sebastian.liceoyarah.ms.students.entities.dtos.create.CreateFolioDto;
 import org.sebastian.liceoyarah.ms.students.entities.dtos.create.CreateStudentDto;
-import org.sebastian.liceoyarah.ms.students.services.FolioService;
+import org.sebastian.liceoyarah.ms.students.entities.dtos.update.UpdateStudentDto;
 import org.sebastian.liceoyarah.ms.students.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -236,12 +231,90 @@ public class StudentController {
     }
 
     @PutMapping("update-by-id/{id}")
-    public ResponseEntity<ApiResponseConsolidation<Object>> update(){
-        return null;
+    @Operation(
+            summary = "Actualizar un estudiante",
+            description = "Actualizar un estudiante dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID para la actualización", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario Actualizado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseCreate.class))),
+            @ApiResponse(responseCode = "406", description = "Errores en los campos de actualización.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseCreateErrorFields.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class))),
+    })
+    public ResponseEntity<ApiResponseConsolidation<Object>> update(
+            @Valid
+            @RequestBody UpdateStudentDto studentRequest,
+            BindingResult result,
+            @PathVariable("id") String id
+    ){
+
+        if(result.hasFieldErrors()){
+            ErrorsValidationsResponse errors = new ErrorsValidationsResponse();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            errors.validation(result),
+                            new ApiResponseConsolidation.Meta(
+                                    "Errores en los campos de actualización",
+                                    HttpStatus.BAD_REQUEST.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        ResponseWrapper<Student> studentUpdate;
+
+        //Validamos que el ID de la URL sea válido
+        try {
+            Long studentId = Long.parseLong(id);
+            studentUpdate = studentService.update(studentId, studentRequest);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( studentUpdate.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            studentUpdate.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Usuario Actualizado Correctamente.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                studentUpdate.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
     }
 
     @DeleteMapping("/delete-by-id/{id}")
-    public ResponseEntity<ApiResponseConsolidation<Object>> delete(){
+    public ResponseEntity<ApiResponseConsolidation<Object>> delete(
+            @PathVariable("id") String id
+    ){
         return null;
     }
 
