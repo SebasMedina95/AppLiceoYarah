@@ -1,6 +1,10 @@
 package org.sebastian.liceoyarah.ms.students.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +15,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.sebastian.liceoyarah.ms.students.clients.dtos.Users;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "TBL_STUDENTS")
@@ -55,6 +62,7 @@ public class Student {
     @Comment("Persona(s) responsable(s) del estudiante (Guardar como String JSON)")
     @Schema(description = "Acudiente(s) responsable del estudiante (Guardar como String JSON)")
     @NotNull
+    @JsonIgnore  // Oculta el campo personsCharge en la serialización JSON
     private String personsCharge;
 
     @Column(name = "STATUS" )
@@ -97,4 +105,22 @@ public class Student {
     @Transient //No hace parte directa,no mapeado a la persistencia.
     private Users person;
 
+    @Transient
+    @JsonProperty("personsChargeArray")
+    public List<PersonsCharge> getPersonsChargeArray() {
+        List<PersonsCharge> list = new ArrayList<>();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map<String, String> map = mapper.readValue(personsCharge,
+                    new TypeReference<Map<String, String>>() {});
+
+            map.forEach((key, value) -> list.add(new PersonsCharge(key, value)));
+        } catch (Exception e) {
+            e.printStackTrace(); // Maneja la excepción según sea necesario
+        }
+        return list;
+    }
+
 }
+
+
