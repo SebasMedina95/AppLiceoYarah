@@ -137,7 +137,7 @@ el mismo resultado, más legible incluso`.
 el JAR contenía el proyecto en pocas palabras, ahora, no necesitamos dos comandos sino solo
 1, el cual genera el JAR y al mismo tiempo generará la imagen correspondiente gracias a unos
 ajustes realizados en el Dockerfile, ahora, el comando es (**No olvide pararse en el proyecto
-correspondiente para realizar la ejecución del comando**):
+correspondiente (MS Correspondiente) para realizar la ejecución del comando**):
 ````dockerfile
 docker build -t liceoyarah-ms-persons-image:latest . -f .\Dockerfile
 ````
@@ -145,11 +145,59 @@ El anterior comando construye la imagen, el ``-t`` me permite dar un nombre, el 
 generar a nivel de raíz la locación y el ``-f`` apuntar al archivo de configuración, que como
 estamos trabajando los micro servicios independientes a pesar de usar un mono repo, decimos
 que es el Dockerfile de la raíz el que usaremos. Ahora, una vez generada correctamente la
-imagen, podríamos ejecutar el comando para crear el contenedor:
-````dockerfile
-docker run -p 18881:18881 --name liceoyarah-ms-persons-container liceoyarah-ms-persons-image
-````
+imagen, podríamos ejecutar el comando para crear el contenedor y asociarlo a una red.
 
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\
+:::::::::::::::::::::::::::::::::: INFORMACIÓN IMPORTANTE ::::::::::::::::::::::::::::::::::\
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+``
+NOTA 1: Tenemos que tener la red creada para tirarla de entrada con un solo comando, la
+idea es tener una red llamada liceo_yarah. Si dado el caso no está creada aún, por favor
+primero ejecute el comando docker network create liceo_yarah y luego ejecute el comando
+de creación del contenedor.
+``
+
+``
+NOTA 2: Cuando estemos trabajando sobre la red de docker, debemos tener MUCHO CUIDADO con
+el nombre que le damos al aplicar el Docker Run al contenedor, si mi application.properties 
+me dice que el valor de la propiedad spring.application.name es yarah-ms-persons, entonces 
+ese es el nombre que le debo colocar al contenedor al correr el Docker Run, sino, no podrá 
+comunicarse entre los micro servicios, mucho cuidado con esta configuración porque es fácil 
+olvidarla colocando otro nombre.
+``
+
+En este orden de ideas, corra el comando:
+````dockerfile
+docker run -p 18881:18881 --name yarah-ms-persons --network liceo_yarah liceoyarah-ms-persons-image
+````
+Con ``-p`` asignamos el puerto, con ``--name`` damos el nombre al contenedor, con ``--network`` definimos en cual red
+lo vamos a ubicar y al final se coloca la imagen que se asociará.
+
+--------------------------------------------------------------------------------------
+### Creación de base de datos para Docker
+
+Para el proceso de dockerización de la base de datos, necesitamos tener un contenedor para la base
+de datos, este proyecto manejará 100% PostgreSQL pero diferentes bases de datos para cada MS. Para
+crear cada BD, habiendo descargado la imagen de postgres a usar, usamos el siguiente comando:
+````dockerfile
+docker run -p 5555:5432 --name yarah-db-ms-persons --network liceo_yarah -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=yarah_ms_persons_db -e POSTGRES_USER=postgres -d postgres:16.4
+````
+Explicación, el ``-p`` define el puerto externo (el cual definimos otro porque ya tenemos ocupado el 5432),
+con el ``--name`` definimos como llamaremos este contenedor, importante definir el ``--network`` para usarla sobre la 
+misma red de contenedores de Docker, y los ``-e`` son las variables de entorno que requiere postgres para poder
+funcionar según las especificaciones de docker hub; definimos el ``-d`` para que arranque en modo detach y,
+finalmente, colocamos la imagen que usaremos, que, como mencionamos sera una imagen de postgres, versión 16.4,
+es decir, la imagen de Docker ``postgres:16.4``.
+
+Credenciales del ejemplo:
+* **Host**: localhost
+* **Database**:  yarah_ms_persons_db
+* **Port**: 5555
+* **Usuario**: postgres
+* **Contraseña**: 1234
+
+--------------------------------------------------------------------------------------
 ### Notas de actualización
 * **Última actualización:** Agosto 28/2024.
 * **Desarrollador:** Juan Sebastian Medina Toro.
