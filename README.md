@@ -31,6 +31,7 @@ los diferentes proyectos.
     * Personas
     * Usuarios
     * Estudiantes
+    * Profesores
     * Empleados
     * Planillas Históricas
     * Eventos
@@ -45,13 +46,20 @@ Desarrollador de Backend: [Juan Sebastian Medina Toro](https://www.linkedin.com/
 
 ### Levantamiento de la aplicación:
 Descargada la aplicación debe descargar las dependencias requeridas.
-* Ejecute la estructura maven:
+* Puede revisar ejecutando los comandos:
 ````dockerfile
 clean
 compile
-install
 ````
-Asegurese que las dependencias están instaladas en el POM
+El install no se aplica porque aún faltan configuraciones para la aplicación de las pruebas unitarias.
+Asegurese que las dependencias están instaladas en el POM. Una vez garantizado lo anterior, nos paramos
+en cada uno de los MS y vamos ejecutando el comando:
+````dockerfile
+docker-compose --project-name yarah_ms_students up --build -d
+````
+Donde la variante está en que ``--project-name`` es el nombre con el que queremos que aparezca el contenedor,
+``up`` es para levantar el proyecto, el ``--build`` es para hacer re construcción si hubo alguna modificación antes
+de las ejecuciones y el ``-d`` para levantar el contenedor en modo desacoplado o detach.
 
 ---------------------------------------------------------------------------------------
 
@@ -83,6 +91,9 @@ ELABORANDO EN EL MOMENTO DETERMINADO``\
 properties, lo mismo el index.html según las configuraciones aplicadas. Tenga en cuenta
 esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
 
+---------------------------------------------------------------------------------------
+### En este punto habran modificaciones para la documentación y dejar lineamientos claros
+### La documentación mostrará los pasos realizados hasta la simplificación total del proceso.
 
 ---------------------------------------------------------------------------------------
 ### Construcción de imágenes de Docker
