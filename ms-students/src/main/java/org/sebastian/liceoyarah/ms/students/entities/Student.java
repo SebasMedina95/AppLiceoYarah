@@ -103,7 +103,7 @@ public class Student {
     private Folio folio;
 
     @Transient //No hace parte directa,no mapeado a la persistencia.
-    private Users person;
+    private Users user;
 
     @Transient
     @JsonProperty("personsChargeArray")

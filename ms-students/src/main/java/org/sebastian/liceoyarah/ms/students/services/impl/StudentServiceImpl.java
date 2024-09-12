@@ -213,7 +213,7 @@ public class StudentServiceImpl implements StudentService {
                 .map(u -> {
                     String personDocument = u.getDocumentNumber();
                     Users user = getUserMs.getPersonOfMsPersons(personDocument);
-                    u.setPerson(user);
+                    u.setUser(user);
                     return u;
                 })
                 .toList();
@@ -240,7 +240,7 @@ public class StudentServiceImpl implements StudentService {
 
                 String userDocumentMs = student.getDocumentNumber();
                 Users userData = getUserMs.getPersonOfMsPersons(userDocumentMs);
-                student.setPerson(userData);
+                student.setUser(userData);
 
                 return new ResponseWrapper<>(student, "Estudiante encontrado por ID correctamente");
 

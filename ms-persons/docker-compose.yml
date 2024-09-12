@@ -1,0 +1,47 @@
+# Aplicamos las configuraciones que usabamos por línea de comandos
+# pero la diferencia es que esta vez está condensando en un solo comando.
+services:
+  # Primero la base de datos
+  yarah-db-ms-persons:
+    image: postgres:16.4
+    container_name: yarah-db-ms-persons
+    ports:
+      - "5555:5432"
+    environment:
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: yarah_ms_persons_db
+      POSTGRES_USER: postgres
+    volumes:
+      - data-ms-persons:/var/lib/postgresql/data
+    networks:
+      - liceo_yarah
+
+  # Ahora la aplicación, la aplicación depende primero de que la BD esté operando.
+  # Con el build la idea es que se construya la imagen, para que sea en un solo comando.
+  yarah-ms-persons:
+    container_name: yarah-ms-persons
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: liceoyarah-ms-persons-image
+    ports:
+      - "18881:18881"
+    networks:
+      - liceo_yarah
+    depends_on:
+      - yarah-db-ms-persons
+
+# Por aparte debo dejar claramente definido los volumenes y la red
+# NOTA 1 -> Debe existir el volumen si queremos re usar la información
+# NOTA 2 -> La red tiene que estar creada con antelación para no tener problemas.
+volumes:
+  data-ms-persons:
+    name: data-ms-persons
+networks:
+  liceo_yarah:
+    name: liceo_yarah
+    external: true
+
+
+
+

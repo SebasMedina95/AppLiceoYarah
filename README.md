@@ -131,7 +131,7 @@ el nombre de la imagen, por ejemplo, para el MS Persons usamos el nombre de tag 
 generó la imagen de liceoyarah-ms-persons, podemos usar este nombre y también obtendríamos
 el mismo resultado, más legible incluso`.
 ---------------------------------------------------------------------------------------
-### Optimizaciones de Imágenes/Contenedores Docker
+### Optimizaciones de Imágenes/Contenedores Docker (**VERSIÓN 1**)
 ``NOTA RECORDATORIA: Recordemos ubicarnos dentro del respectivo micro servicio``
 1. Primeramente, requeriamos generar primero el JAR antes de hacer los pasos de Docker, pues
 el JAR contenía el proyecto en pocas palabras, ahora, no necesitamos dos comandos sino solo
@@ -174,6 +174,8 @@ docker run -p 18881:18881 --name yarah-ms-persons --network liceo_yarah liceoyar
 Con ``-p`` asignamos el puerto, con ``--name`` damos el nombre al contenedor, con ``--network`` definimos en cual red
 lo vamos a ubicar y al final se coloca la imagen que se asociará.
 
+
+
 --------------------------------------------------------------------------------------
 ### Creación de base de datos para Docker
 
@@ -197,9 +199,12 @@ Credenciales del ejemplo:
 * **Usuario**: postgres
 * **Contraseña**: 1234
 
+ENTONCES, PARA PODER QUE LA BASE DE DATOS SE ESTÉ CONECTANDO A LA APLICACIÓN, DEBEMOS GARANTIZAR QUE LA BASE DE DATOS
+YA ESTÁ LEVANTADA Y CORRIENDO ANTES DE APLICAR docker run.
+
 --------------------------------------------------------------------------------------
 ### Notas de actualización
-* **Última actualización:** Agosto 28/2024.
+* **Última actualización:** Septiembre 12/2024.
 * **Desarrollador:** Juan Sebastian Medina Toro.
 * **Contexto trabajo:** Elaboración Micro Servicios.
 
