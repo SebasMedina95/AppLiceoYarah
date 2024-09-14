@@ -106,9 +106,11 @@ docker-compose --project-name yarah_ms_users up --build -d
 ````dockerfile
 docker-compose --project-name yarah_ms_students up --build -d
 ````
-El comando ejecutará el ``docker-compose`` con las configuraciones requeridas, levantará la imágen, usará el volumen de
-datos en caso de haber, construira el contenedor y lo levantará de manera detach (desacoplada). Le bandera del comando
-anterior ``--project-name`` le dará un nombre al contenedor, el ``up`` levantará el comando, el ``--build`` re construirá la
+El comando ejecutará el ``docker-compose`` con las configuraciones requeridas (usará como referencia el Dockerfile creado
+para cada aplicación en concreto), levantará la imágen, usará el volumen de datos en caso de haber, construira el contenedor 
+y lo levantará de manera detach (desacoplada).\
+
+Le bandera del comando anterior ``--project-name`` le dará un nombre al contenedor, el ``up`` levantará el comando, el ``--build`` re construirá la
 configuración si dado el caso hicimos algún cambio en el código y el ``-d``es para ejecutarlo desacopladamente.
 
 ``Debe verificar que los micro servicios quedaron creados dentro de la red de liceo_yarah``; aunque la configuración de
