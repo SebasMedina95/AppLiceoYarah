@@ -1,71 +1,126 @@
-## APLICACIÓN ACADÉMICA ##
-Esta aplicación es el desarrollo de un sistema de administración de 
-estudiates para el Liceo Yarah de una reconocida municipalidad, lo cual, 
-el objetivo será construir esta aplicación BACKEND en una arquitectura 
-de micro servicios (aplicación API RESTFul), generando una aplicación 
-más mantenible; hasta el momento no se ha definido de cuantos micro 
-servicios tendrémos, pero se lista al final de este enunciado los MS 
-tentativos para la aplicación. 
+# LICEO YARAH #
+### Desarrollado por: ###
+* **Desarrollador de Backend**: Juan Sebastian Medina Toro.
+* **Enlaces Comunicación**: [Enlace a Linkedin](https://www.linkedin.com/in/juan-sebastian-medina-toro-887491249/).
+* **Portafolio Trabajo**: [Mi Portafolio](https://github.com/SebasMedina95).
+* **Enlace Aplicación**: [Liceo Yarah](https://github.com/SebasMedina95/AppLiceoYarah.git).
+* **Asistencias de Desarrollo**: No.
+* **Frontend de comunicación**: No.
 
-Efectivamente, la aplicación está desarrollada en Spring Boot versión 
-3.3.2 y estamos manejando diferentes bases de datos Postgres para cada 
-MS (cada MS tendrá su BD independiente). Para la comunicación entre los 
-micros estaremos usando Feign así como ORM base será JPA e Hibernate para 
-el tema de las consultas SQL, las entidades estarán manejadas por Lombok 
-y tendremos adecuado en cada uno de los controladores la respectiva 
-documentación Swagger.
+-------------------------------
 
-Las diferentes bases de datos están manejadas con bases de datos locales,
-sin embargo, como una mejora en la versión se propondrá trabajar también
-con imágenes de docker para el manejo de la base de datos y uso de semillas.
+### APLICACIÓN ACADÉMICA TIPO MASTER ###
+Esta aplicación es el desarrollo de un sistema de administración de
+estudiates para el Liceo Yarah de una reconocida municipalidad, lo cual,
+el objetivo será construir esta aplicación BACKEND en una arquitectura
+de micro servicios (aplicación API RESTFul), generando una aplicación
+más mantenible; hasta el momento no se ha definido de cuantos micro
+servicios tendrémos, pero se lista al final de este enunciado los MS
+tentativos para la aplicación.
 
-* NOTA:
-Se está usando un monorepo solamente para poder manejar mejor el tema
-de legibilidad, pero no hay un caso técnico asociado, también, pensando en
-las personas que verán esta parte, para que no sea caótico navegar entre
-los diferentes proyectos.
+La aplicación trabajará con bases de datos independizadas, es decir, cada
+micro servicio tendrá su base de datos especializada, y para los procesos
+de comunicación donde se requiere referencias estaremos usando campos de
+referencia (cómo el número de documento) y tecnologías que permitan la 
+comunicación entre micro servicios bajo una estructura dockerizada y
+la misma red de trabajo.
 
--------------------------------------------------------------------------------
+### Tecnologías y herramientas dispuestas para el desarrollo:
+| Tecnología      | Descripción y Versiones                                                    |
+|-----------------|----------------------------------------------------------------------------|
+| Spring Boot     | Backend en su versión 3.3.3                                                |
+| PostgreSQL      | Base de datos relacional, versión 16.4                                     |                                                                                                                                           | 
+| JPA / Hibernate | Manejo ORM para las consultas a la base de datos                           |
+| JUnit y Mockito | Para las pruebas unitarias de los micro servicios                          |
+| JDK             | Ejecución Java, versión 21                                                 |                                                                                                                                           | 
+| Docker          | Para Dockerizar la aplicación y manejo tanto de contenedores como imágenes |                                                                                                                                          |
+| Swagger         | Documentación Swagger, versión 2 (Dependencia Maven)                       |
+| Feign           | Comunicación entre micro servicios (Dependencia Maven)                     |
+| Git             | Manejador de versiones                                                     |
+| Kubernets       | Para el manejo de las imágenes que iremos generando                        |
+| MiniKube        | Para el manejo de Kubernets en la aplicación                               |
+| Postman         | Prueba de End Points                                                       |
+| DBeaver         | Para el manejo de las bases de datos                                       |
 
-## MÓDULOS (MICROS) TENTATIVOS: 
-    * Personas
-    * Usuarios
-    * Estudiantes
-    * Profesores
-    * Empleados
-    * Planillas Históricas
-    * Eventos
-    * Alimentación
-    * Activos Fíjos
+* **NOTA 1**:
+  Se está usando un ``monorepo`` solamente para poder manejar mejor el tema
+  de legibilidad, pero no hay un caso técnico asociado, también, pensando en
+  las personas que verán esta parte, para que no sea caótico navegar entre
+  los diferentes proyectos.
+* **NOTA 2**:
+  La aplicación a medida que se trabaja se irá dockerizando, por lo que ciertos
+  maneras de correr las aplicaciones variaran un poco a lo tradicional.
 
----------------------------------------------------------------------------------------
-# Desarrollado por: #
-Desarrollador de Backend: [Juan Sebastian Medina Toro](https://www.linkedin.com/in/juan-sebastian-medina-toro-887491249/).
+-------------------------------
 
----------------------------------------------------------------------------------------
+### MÓDULOS (MICRO SERVICIOS) ###
+Los módulos se irán creando en un orden especifico para ir comunicandolos de manera respectiva,
+sin embargo, algunas funcionalidades quedarán pendientes dado el caso de dependencias no previstas
+al inicio del desarrollo, también se hace acotación de que el módulo de autenticación será acomodado
+tentativamente en el micro de usuarios, sin embargo, es una idea que podrá organizarse sobre marcha 
+dados los temas de OAuth2 y Spring Security; a continuación, están los micro servicios tentativos:
 
-### Levantamiento de la aplicación:
-Descargada la aplicación debe descargar las dependencias requeridas.
-* Puede revisar ejecutando los comandos:
+| Micros      | Estado        | Proyecto    | Descripción                                                                                                                                                         |
+|-------------|---------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Personas    | `Finalizado`  | ms-persons  | Micro servicio para la gestión de las diferentes personas, tales como estudiantes, usuarios, acudientes, profesores, empleados, entre otros.                        |
+| Usuarios    | `Finalizado`  | ms-users    | Micro servicio para la gestión de los usuarios, los usuarios son los que tendrán acceso al sistema y podrán ser estudiantes y profesores en primera instancia.      | 
+| Estudiantes | `Finalizado`  | ms-students | Micro servicio para la gestión de los estudiantes, los estudiantes son usuarios, por lo que enlazamos este MS con el de Usuarios.                                   |
+| Profesores  | `Sin_Empezar` | -           | Micro servicio para la gestión de los profesores, los profesores son usuarios del sistema y no pueden ser estudiantes.                                              |
+| Asignaturas | `Sin_Empezar` | -           | Micro servicio para la gestión de las asignaturas, estará enlazada con los profesores para tomar apunte de que asignaturas puede dar cada docente.                  |
+| Documentos  | `Sin_Empezar` | -           | Micro servicio para manejar la documentación, tal como documentos de identidad, fotografías, sanciones y comprobantes.                                              |
+| Grupos      | `Sin_Empezar` | -           | Micro servicio para gestionar los grupos y los estudiantes que pertenencen a los grupos, a este punto, nos comunicamos con el micro de estudiantes y de profesores. |
+| Planillas   | `Sin_Empezar` | -           | Micro servicio para la consolidación de las notas de los estudiantes por periodo académico, nos enlazamos con el micro de grupos                                    |
+| Informes    | `Sin_Empezar` | -           | Micro servicio para generar el boletín de notas por periodo, enlazado directamente con el micro de planillas                                                        |
+
+-------------------------------
+
+### LEVANTAMIENTO DE LA APLICACIÓN ###
+
+``Es importante destacar que la aplicación la iremos documentando y actualizando a medida surjan temas de noción``, 
+por lo cual, para el levantamiento de la aplicación lo haremos todo en miras de trabajar ``directamente con Docker``,
+por lo que usaremos las imagenes y configuraciones dispuestas en los diferentes archivos Dockerfile y el archivo de
+docker-compose.yml que hay en cada micro servicio, a continuación, se denotan los pasos a la fecha **(13/09/2024)** para
+levantar cada una de las aplicaciones en ambiente de desarrollo **LOCAL**.
+
+#### Creación/verificación de existencia de RED (Network Docker) de trabajo
+* Para poder trabajar con los micros dockerizados, debemos estar bajo la misma red de trabajo para que se puedan
+comunicar tanto los micros entre si como las bases de datos dentro del contexto de una red claramente definida, 
+por tanto, verificamos con el comando ``docker network ls`` si tenemos la red **liceo_yarah**, en caso de no
+tenerla tenemos que creala antes de ejecutar los siguientes comandos, por lo que ejecutaríamos para crear la red
+el comando ``docker network create liceo_yarah``; si dado el caso ya la tienes puedes pasar al siguiente paso.
+
+#### Micro servicio de personas:
+* Para levantar ``ms-persons`` nos ``ubicamos dentro del proyecto en su raíz`` en el proyecto y ejecutamos:
 ````dockerfile
-clean
-compile
+docker-compose --project-name yarah_ms_persons up --build -d
 ````
-El install no se aplica porque aún faltan configuraciones para la aplicación de las pruebas unitarias.
-Asegurese que las dependencias están instaladas en el POM. Una vez garantizado lo anterior, nos paramos
-en cada uno de los MS y vamos ejecutando el comando:
+
+#### Micro servicio de usuarios:
+* Para levantar ``ms-users`` nos ``ubicamos dentro del proyecto en su raíz`` en el proyecto y ejecutamos:
+````dockerfile
+docker-compose --project-name yarah_ms_users up --build -d
+````
+
+#### Micro servicio de estudiantes:
+* Para levantar ``ms-students`` nos ``ubicamos dentro del proyecto en su raíz`` en el proyecto y ejecutamos:
 ````dockerfile
 docker-compose --project-name yarah_ms_students up --build -d
 ````
-Donde la variante está en que ``--project-name`` es el nombre con el que queremos que aparezca el contenedor,
-``up`` es para levantar el proyecto, el ``--build`` es para hacer re construcción si hubo alguna modificación antes
-de las ejecuciones y el ``-d`` para levantar el contenedor en modo desacoplado o detach.
+El comando ejecutará el ``docker-compose`` con las configuraciones requeridas, levantará la imágen, usará el volumen de
+datos en caso de haber, construira el contenedor y lo levantará de manera detach (desacoplada). Le bandera del comando
+anterior ``--project-name`` le dará un nombre al contenedor, el ``up`` levantará el comando, el ``--build`` re construirá la
+configuración si dado el caso hicimos algún cambio en el código y el ``-d``es para ejecutarlo desacopladamente.
 
----------------------------------------------------------------------------------------
+``Debe verificar que los micro servicios quedaron creados dentro de la red de liceo_yarah``; aunque la configuración de
+nuestro docker-compose y Dockerfile ya hace esta parte, no está de más verificar adecuadamente que tanto la base de datos
+que se crea como el proyecto estén en la misma red, para ello, ejecutemos el comando ``docker network inspect liceo_yarah``
+y con esto lo verificamos.
+
+-------------------------------
 
 ### Documentación Swagger
 * Microservicio de personas (MS Persons) -> **ms-persons**.
-Ingrese a la siguiente URL:
+  Ingrese a la siguiente URL:
 ````dockerfile
 http://localhost:18881/business/swagger-ui/index.html
 ````
@@ -81,141 +136,32 @@ http://localhost:18882/business/swagger-ui/index.html
 ````dockerfile
 http://localhost:18883/business/swagger-ui/index.html
 ````
+-------------------------------
 
-``Es importante destacar también que el host y el puerto para trabajar
-en local host **SIN DOCKER** ES localhost:5432, EN EL PROPERTIES HACEMOS
-EL AJUSTE PARA TRABAJAR, LA IDEA ES GENERAR LAS IMÁGENES DE DOCKER Y AL
-TENERLAS DESPLEGADAS SOLO TRABAJAR CON ELLAS Y EN LOCAL EL MS QUE SE ESTE
-ELABORANDO EN EL MOMENTO DETERMINADO``\
-**Nota adicional:** Tener en cuenta que el puerto puede variar según las configuraciones de las 
-properties, lo mismo el index.html según las configuraciones aplicadas. Tenga en cuenta
-esto a la hora de la aplicación de Kubernets, Docker y MiniKube.
+### Notas útiles del desarrollo:
 
----------------------------------------------------------------------------------------
-### En este punto habran modificaciones para la documentación y dejar lineamientos claros
-### La documentación mostrará los pasos realizados hasta la simplificación total del proceso.
+> Como las aplicaciones ya se encuentran Dockerizadas y configuradas en el Dockerfile y también en el docker-compose.yml,
+> es importante destacar que, los nombres que estamos dando a nivel de contenedores o a nivel de las aplicaciones en 
+> otras palabras, debe corresponder al nombre que le dimos en el archivo de application.properties en la propiedad de
+> name, esta propiedad es la que estamos usando cuando hacemos referencias con feign a otros micro servicios, no usamos
+> una URL sino el "host" por así decirlo, el host es el nombre, entonces, debemos tener especial atención porque si
+> cambiamos esto podríamos tener muchos problemas de comunicación. Por tanto, cuando ejecutemos el comando docker-compose
+> que ya vimos en la sección superior, al aplicar el --project-name coloquemos como nombre el del proyecto, es decir,
+> el nombre que tiene el application.properties.name para así tener la comunicación lógicamente enlazada.
 
----------------------------------------------------------------------------------------
-### Construcción de imágenes de Docker
-`NOTA IMPORTANTE, ANTES DE LEER ESTE APARTADO, VERIFIQUE PRIMERO EL APARTADO SIGUIENTE
-DONDE HABLAMOS DE LAS OPTIMIZACIONES, PUESTO QUE, A MEDIDA QUE SE FUE AVANZANDO EN EL 
-DESARROLLO, SE FUERON OPTIMIZANDO LAS IMAGENES ASÍ COMO LOS ARCHIVOS DE DOCKER Y POR TANTO, 
-LO QUE TOMABA 2 O 3 PASOS O INCLUSO MÁS, SE HA REDUCIDO A MÁS POCOS PASOS Y COMANDOS MÁS 
-PERSONALIZADOS PARA ESO.
-ENTONCES, ANTES DE CONTINUAR EN ESTE PUNTO REVISE LAS OPTIMIZACIONES, EN PRELACIÓN A ELLO,
-SE DEJA ESTE APARTADO COMO DOCUMENTACIÓN ÚTIL.`
----------------------------------------------------------------------------------------
-Antes de comenzar, debemos tener a consideración que con Docker debemos manejar el
-tema del localhost diferente. Recordemos que ahora, trabajando entre los contenedores de 
-Docker ya no usamos directamente al localhost, sino que debemos conectarnos al local de 
-los contenedores, por eso, en el código tenemos que configurar las URLs en vez de localhost 
-con ``host.docker.internal``.
+> Para el manejo de los volumenes de datos, que es donde esta la data, recordemos que la información en desarrollo se
+> está guardando localmente en una configuración especifica de la máquina, es decir, que si ejecuto la aplicación en 
+> otro computador, es claro que no tendremos data, se creará el volumen pero estará vacío por justa causa, por lo cual,
+> si vamos a ejecutar en otra máquina, no estará demás crear un Backup de los INSERT SQL para poblar la base de datos, 
+> esta incomodidad nos toca porque no tenemos la BD en una nube.
 
-Ahora, para continuar con el proceso de dockerización de las aplicaciones debemos tener 
-los JAR generados. En este caso, para poder generarlos sin complicaciones en vista de por 
-local nos tira problemas al hacer clean-compile-install por las imagenes/contenedores de 
-Docker, nos saltamos la parte de las pruebas y solo empaquetamos el JAR, para ello, 
-ubicados en el proyecto donde veamos el ``mvnw`` usamos el comando:
-````dockerfile
-.\mvnw clean package -DskipTests
-````
-Este comando lo que hará es empaquetar el JAR y tenerlo listo para usar.
-Ahora, nos ubicamos en la proyecto, donde podemos ver que en la raíz se encuentra el Dockerfile,
-en este punto debemos ejecutar el comando para construir la imagen:
-````dockerfile
-docker build -t liceoyarah-ms-persons:latest .
-````
-Lo que queremos decir es que construya una imagen a partir del Dockerfile, el . nos indica
-que estamos en la raíz del proyecto en ubicación. El -t más el liceoyarah-ms-persons:latest 
-nos indica el nombre que le daremos a la imagen, así como también el latest es para referir 
-la última versión de la imagen generada.
-Ahora, debemos construir el contenedor a partir de la imagen usando el comando:
-````dockerfile
-docker run -p 18881:18881 --name liceoyarah-ms-persons-container 04381f1995bf
-````
-Ten en cuenta que ``04381f1995bf`` es el ID de la imagen que se nos creo anteriormente, este
-valor podría variar por supuesto entre máquinas. Debemos definir el puerto con ``-p`` para
-poder comunicarnos desde el exterior y con ``--name`` le damos un nombre para que Docker no lo
-asigne de manera aleatoria, quedando más personalizada.
-`Recordemos en el paso anterior que en vez de un ID de imagen como 04381f1995bf podemos usar
-el nombre de la imagen, por ejemplo, para el MS Persons usamos el nombre de tag cuando se
-generó la imagen de liceoyarah-ms-persons, podemos usar este nombre y también obtendríamos
-el mismo resultado, más legible incluso`.
----------------------------------------------------------------------------------------
-### Optimizaciones de Imágenes/Contenedores Docker (**VERSIÓN 1**)
-``NOTA RECORDATORIA: Recordemos ubicarnos dentro del respectivo micro servicio``
-1. Primeramente, requeriamos generar primero el JAR antes de hacer los pasos de Docker, pues
-el JAR contenía el proyecto en pocas palabras, ahora, no necesitamos dos comandos sino solo
-1, el cual genera el JAR y al mismo tiempo generará la imagen correspondiente gracias a unos
-ajustes realizados en el Dockerfile, ahora, el comando es (**No olvide pararse en el proyecto
-correspondiente (MS Correspondiente) para realizar la ejecución del comando**):
-````dockerfile
-docker build -t liceoyarah-ms-persons-image:latest . -f .\Dockerfile
-````
-El anterior comando construye la imagen, el ``-t`` me permite dar un nombre, el ``.`` permite
-generar a nivel de raíz la locación y el ``-f`` apuntar al archivo de configuración, que como
-estamos trabajando los micro servicios independientes a pesar de usar un mono repo, decimos
-que es el Dockerfile de la raíz el que usaremos. Ahora, una vez generada correctamente la
-imagen, podríamos ejecutar el comando para crear el contenedor y asociarlo a una red.
-
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::\
-:::::::::::::::::::::::::::::::::: INFORMACIÓN IMPORTANTE ::::::::::::::::::::::::::::::::::\
-::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-``
-NOTA 1: Tenemos que tener la red creada para tirarla de entrada con un solo comando, la
-idea es tener una red llamada liceo_yarah. Si dado el caso no está creada aún, por favor
-primero ejecute el comando docker network create liceo_yarah y luego ejecute el comando
-de creación del contenedor.
-``
-
-``
-NOTA 2: Cuando estemos trabajando sobre la red de docker, debemos tener MUCHO CUIDADO con
-el nombre que le damos al aplicar el Docker Run al contenedor, si mi application.properties 
-me dice que el valor de la propiedad spring.application.name es yarah-ms-persons, entonces 
-ese es el nombre que le debo colocar al contenedor al correr el Docker Run, sino, no podrá 
-comunicarse entre los micro servicios, mucho cuidado con esta configuración porque es fácil 
-olvidarla colocando otro nombre.
-``
-
-En este orden de ideas, corra el comando:
-````dockerfile
-docker run -p 18881:18881 --name yarah-ms-persons --network liceo_yarah liceoyarah-ms-persons-image
-````
-Con ``-p`` asignamos el puerto, con ``--name`` damos el nombre al contenedor, con ``--network`` definimos en cual red
-lo vamos a ubicar y al final se coloca la imagen que se asociará.
+> Tengamos en cuenta que, a la fecha, 13 de Septiembre del 2024 no estamos haciendo Testing a la aplicación, una de las
+> configuraciones que hicimos para el Dockerfile omite este tema de las pruebas para poder generar el JAR, entonces, 
+> debemos ajustar más adelante este tema por buenas prácticas, todo lo que desarrollamos debe tener pruebas unitarias
+> pero solamente en la implementación del servicio, no vamos a probar utilidades ni controladores.
 
 
 
---------------------------------------------------------------------------------------
-### Creación de base de datos para Docker
 
-Para el proceso de dockerización de la base de datos, necesitamos tener un contenedor para la base
-de datos, este proyecto manejará 100% PostgreSQL pero diferentes bases de datos para cada MS. Para
-crear cada BD, habiendo descargado la imagen de postgres a usar, usamos el siguiente comando:
-````dockerfile
-docker run -p 5555:5432 --name yarah-db-ms-persons --network liceo_yarah -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=yarah_ms_persons_db -e POSTGRES_USER=postgres -d postgres:16.4
-````
-Explicación, el ``-p`` define el puerto externo (el cual definimos otro porque ya tenemos ocupado el 5432),
-con el ``--name`` definimos como llamaremos este contenedor, importante definir el ``--network`` para usarla sobre la 
-misma red de contenedores de Docker, y los ``-e`` son las variables de entorno que requiere postgres para poder
-funcionar según las especificaciones de docker hub; definimos el ``-d`` para que arranque en modo detach y,
-finalmente, colocamos la imagen que usaremos, que, como mencionamos sera una imagen de postgres, versión 16.4,
-es decir, la imagen de Docker ``postgres:16.4``.
 
-Credenciales del ejemplo:
-* **Host**: localhost
-* **Database**:  yarah_ms_persons_db
-* **Port**: 5555
-* **Usuario**: postgres
-* **Contraseña**: 1234
-
-ENTONCES, PARA PODER QUE LA BASE DE DATOS SE ESTÉ CONECTANDO A LA APLICACIÓN, DEBEMOS GARANTIZAR QUE LA BASE DE DATOS
-YA ESTÁ LEVANTADA Y CORRIENDO ANTES DE APLICAR docker run.
-
---------------------------------------------------------------------------------------
-### Notas de actualización
-* **Última actualización:** Septiembre 12/2024.
-* **Desarrollador:** Juan Sebastian Medina Toro.
-* **Contexto trabajo:** Elaboración Micro Servicios.
 
