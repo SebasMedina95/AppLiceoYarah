@@ -13,6 +13,7 @@
         <module>ms-persons</module>
         <module>ms-users</module>
         <module>ms-students</module>
+        <module>ms-professors</module>
     </modules>
 
     <properties>
