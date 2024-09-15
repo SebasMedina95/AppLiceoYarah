@@ -1,8 +1,7 @@
 package com.sebastian.liceoyarah.ms.professors.clients;
 
-
-import org.sebastian.liceoyarah.ms.students.clients.dtos.Persons;
-import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
+import com.sebastian.liceoyarah.ms.professors.clients.dtos.Persons;
+import com.sebastian.liceoyarah.ms.professors.common.utils.ApiResponseConsolidation;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

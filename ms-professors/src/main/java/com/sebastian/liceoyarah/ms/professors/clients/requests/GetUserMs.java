@@ -1,16 +1,16 @@
 package com.sebastian.liceoyarah.ms.professors.clients.requests;
 
 import feign.FeignException;
-import org.sebastian.liceoyarah.ms.students.clients.UserClientRest;
-import org.sebastian.liceoyarah.ms.students.clients.dtos.Users;
-import org.sebastian.liceoyarah.ms.students.common.utils.ApiResponseConsolidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.Collections;
 import java.util.List;
+
+import com.sebastian.liceoyarah.ms.professors.clients.UserClientRest;
+import com.sebastian.liceoyarah.ms.professors.clients.dtos.Users;
+import com.sebastian.liceoyarah.ms.professors.common.utils.ApiResponseConsolidation;
 
 @Configuration
 public class GetUserMs {

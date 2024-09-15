@@ -12,7 +12,7 @@
 	<artifactId>ms-professors</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ms-professors</name>
-	<description>Micro servicio de todas los profesores y asignaturas en la aplicación</description>
+	<description>Micro servicio de todas los profesores en la aplicación</description>
 	<url/>
 	<licenses>
 		<license/>
