@@ -14,5 +14,6 @@ public interface StudentService {
     ResponseWrapper<Student> findById(Long id);
     ResponseWrapper<Student> update(Long id, UpdateStudentDto student);
     ResponseWrapper<Student> delete(Long id);
+    ResponseWrapper<Student> findByDocument(Long documentNumber);
 
 }

@@ -372,5 +372,70 @@ public class StudentController {
 
     }
 
+    @GetMapping("/find-by-document/{documentNumber}")
+    @Operation(
+            summary = "Obtener estudiante por Número de Documento",
+            description = "Obtener un estudiante dado el Número de Documento",
+            parameters = {
+                    @Parameter(name = "documentNumber", description = "Número de Documento del estudiante a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuario encontrado.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class)))
+            }
+    )
+    public ResponseEntity<ApiResponseConsolidation<Object>> findByDocument(
+            @PathVariable("documentNumber") String documentNumber
+    ){
+
+        ResponseWrapper<Student> student;
+
+        //Validamos que el ID que nos proporcionan por la URL sea válido
+        try {
+            Long studentDocumentNumber = Long.parseLong(documentNumber);
+            student = studentService.findByDocument(studentDocumentNumber);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El Número de Documento proporcionado para la búsqueda es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( student.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            student.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Estudiante obtenido por Número de Documento.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                student.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
 
 }

@@ -374,4 +374,38 @@ public class StudentServiceImpl implements StudentService {
         }
 
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public ResponseWrapper<Student> findByDocument(Long documentNumber) {
+
+        logger.info("Iniciando Acción - Obtener un estudiante dado su Número de Documento - MS Students");
+
+        try{
+
+            Optional<Student> studentOptional = studentRepository.findByNumberDocument(documentNumber.toString());
+
+            if( studentOptional.isPresent() ){
+                Student student = studentOptional.orElseThrow();
+                logger.info("Estudiante obtenido por su Número de Documento");
+
+                String userDocumentMs = student.getDocumentNumber();
+                Users userData = getUserMs.getPersonOfMsPersons(userDocumentMs);
+                student.setUser(userData);
+
+                return new ResponseWrapper<>(student, "Estudiante encontrado por Número de Documento correctamente");
+
+            }
+
+            logger.info("El estudiante no pudo ser encontrado con el Número de Documento {}", documentNumber);
+            return new ResponseWrapper<>(null, "El estudiante no pudo ser encontrado por el Número de Documento " + documentNumber);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener estudiante por Número de Documento, detalles ...", err);
+            return new ResponseWrapper<>(null, "El estudiante no pudo ser encontrado por el Número de Documento");
+
+        }
+
+    }
 }
