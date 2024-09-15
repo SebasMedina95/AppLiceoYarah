@@ -60,17 +60,17 @@ al inicio del desarrollo, también se hace acotación de que el módulo de auten
 tentativamente en el micro de usuarios, sin embargo, es una idea que podrá organizarse sobre marcha 
 dados los temas de OAuth2 y Spring Security; a continuación, están los micro servicios tentativos:
 
-| Micros      | Estado                    | Proyecto    | Descripción                                                                                                                                                         |
-|-------------|---------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Personas    | `Finalizado`              | ms-persons  | Micro servicio para la gestión de las diferentes personas, tales como estudiantes, usuarios, acudientes, profesores, empleados, entre otros.                        |
-| Usuarios    | `Parcialmente_Finalizado` | ms-users    | Micro servicio para la gestión de los usuarios, los usuarios son los que tendrán acceso al sistema y podrán ser estudiantes y profesores en primera instancia.      | 
-| Estudiantes | `Finalizado`              | ms-students | Micro servicio para la gestión de los estudiantes, los estudiantes son usuarios, por lo que enlazamos este MS con el de Usuarios.                                   |
-| Profesores  | `Sin_Empezar`             | -           | Micro servicio para la gestión de los profesores, los profesores son usuarios del sistema y no pueden ser estudiantes.                                              |
-| Asignaturas | `Sin_Empezar`             | -           | Micro servicio para la gestión de las asignaturas, estará enlazada con los profesores para tomar apunte de que asignaturas puede dar cada docente.                  |
-| Documentos  | `Sin_Empezar`             | -           | Micro servicio para manejar la documentación, tal como documentos de identidad, fotografías, sanciones y comprobantes.                                              |
-| Grupos      | `Sin_Empezar`             | -           | Micro servicio para gestionar los grupos y los estudiantes que pertenencen a los grupos, a este punto, nos comunicamos con el micro de estudiantes y de profesores. |
-| Planillas   | `Sin_Empezar`             | -           | Micro servicio para la consolidación de las notas de los estudiantes por periodo académico, nos enlazamos con el micro de grupos                                    |
-| Informes    | `Sin_Empezar`             | -           | Micro servicio para generar el boletín de notas por periodo, enlazado directamente con el micro de planillas                                                        |
+| Micros      | Estado                    | Proyecto      | Descripción                                                                                                                                                         |
+|-------------|---------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Personas    | `Finalizado`              | ms-persons    | Micro servicio para la gestión de las diferentes personas, tales como estudiantes, usuarios, acudientes, profesores, empleados, entre otros.                        |
+| Usuarios    | `Parcialmente_Finalizado` | ms-users      | Micro servicio para la gestión de los usuarios, los usuarios son los que tendrán acceso al sistema y podrán ser estudiantes y profesores en primera instancia.      | 
+| Estudiantes | `Finalizado`              | ms-students   | Micro servicio para la gestión de los estudiantes, los estudiantes son usuarios, por lo que enlazamos este MS con el de Usuarios.                                   |
+| Profesores  | `En_Proceso`              | ms-professors | Micro servicio para la gestión de los profesores, los profesores son usuarios del sistema y no pueden ser estudiantes.                                              |
+| Asignaturas | `Sin_Empezar`             | -             | Micro servicio para la gestión de las asignaturas, estará enlazada con los profesores para tomar apunte de que asignaturas puede dar cada docente.                  |
+| Documentos  | `Sin_Empezar`             | -             | Micro servicio para manejar la documentación, tal como documentos de identidad, fotografías, sanciones y comprobantes.                                              |
+| Grupos      | `Sin_Empezar`             | -             | Micro servicio para gestionar los grupos y los estudiantes que pertenencen a los grupos, a este punto, nos comunicamos con el micro de estudiantes y de profesores. |
+| Planillas   | `Sin_Empezar`             | -             | Micro servicio para la consolidación de las notas de los estudiantes por periodo académico, nos enlazamos con el micro de grupos                                    |
+| Informes    | `Sin_Empezar`             | -             | Micro servicio para generar el boletín de notas por periodo, enlazado directamente con el micro de planillas                                                        |
 
 -------------------------------
 
