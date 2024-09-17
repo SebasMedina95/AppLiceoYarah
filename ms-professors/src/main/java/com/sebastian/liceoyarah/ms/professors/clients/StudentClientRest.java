@@ -24,7 +24,7 @@ import java.util.List;
 //Entonces, usamos el yarah-ms-students ya que es el nombre del contenedor en la red networking interna - hostname
 //? Para implementar esta tenemos que tener los contenedores operando en la misma red //?
 @FeignClient(name = "yarah-ms-students", url = "yarah-ms-students:18883/business/v1/api/students")
-public interface GetStudentsMs {
+public interface StudentClientRest {
 
     @GetMapping("/find-by-document/{documentNumber}")
     ApiResponseConsolidation<Students> getStudent(@PathVariable("documentNumber") String documentNumber);

@@ -32,6 +32,12 @@ public class Professor {
     @NotNull
     private String documentNumber;
 
+    @Column(name = "INSTITUTIONAL_EMAIL", unique = true, nullable = false, length = 150 )
+    @Comment("Email institucional para profesor")
+    @Schema(description = "Email Institucional")
+    @NotNull
+    private String institutionalEmail;
+
     @Column(name = "TYPE", nullable = false, length = 1 )
     @Comment("Tipo de Profesor - 1 Planta o 2 Catedra")
     @Schema(description = "Tipo de Profesor")

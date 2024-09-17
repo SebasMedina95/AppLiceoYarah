@@ -13,4 +13,7 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long>, Jpa
     @Query("SELECT p FROM Professor p WHERE p.documentNumber = :documentNumber")
     Optional<Professor> findByNumberDocument(@Param("documentNumber") String documentNumber);
 
+    @Query("SELECT p FROM Professor p WHERE p.cardTittle = :cardTittle")
+    Optional<Professor> findByCardTittle(@Param("cardTittle") String cardTittle);
+
 }
