@@ -166,7 +166,35 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public ResponseWrapper<Professor> findById(Long id) {
-        return null;
+
+        logger.info("Iniciando Acción - Obtener un profesor dado su ID - MS Professor");
+
+        try{
+
+            Optional<Professor> professorOptional = professorRepository.findById(id);
+
+            if( professorOptional.isPresent() ){
+                Professor professor = professorOptional.orElseThrow();
+                logger.info("Profesor obtenido por su ID");
+
+                String userDocumentMs = professor.getDocumentNumber();
+                Users userData = getUserMs.getPersonOfMsPersons(userDocumentMs);
+                professor.setUser(userData);
+
+                return new ResponseWrapper<>(professor, "Profesor encontrado por ID correctamente");
+
+            }
+
+            logger.info("El profesor no pudo ser encontrado cone el ID {}", id);
+            return new ResponseWrapper<>(null, "El profesor no pudo ser encontrado por el ID " + id);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener profesor por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El profesor no pudo ser encontrado por el ID");
+
+        }
+
     }
 
     @Override

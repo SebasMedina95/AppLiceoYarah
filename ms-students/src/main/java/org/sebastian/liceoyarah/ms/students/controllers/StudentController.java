@@ -173,10 +173,10 @@ public class StudentController {
                     @Parameter(name = "id", description = "ID del estudiante a obtener", required = true, in = ParameterIn.PATH)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Usuario encontrado.",
+                    @ApiResponse(responseCode = "200", description = "Estudiante encontrado.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = StudentResponseCreate.class))),
-                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    @ApiResponse(responseCode = "404", description = "Estudiante no encontrado",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class))),
                     @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
@@ -239,7 +239,7 @@ public class StudentController {
             }
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario Actualizado Correctamente.",
+            @ApiResponse(responseCode = "200", description = "Estudiante Actualizado Correctamente.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = StudentResponseCreate.class))),
             @ApiResponse(responseCode = "406", description = "Errores en los campos de actualización.",
@@ -292,7 +292,7 @@ public class StudentController {
                     .body(new ApiResponseConsolidation<>(
                             studentUpdate.getData(),
                             new ApiResponseConsolidation.Meta(
-                                    "Usuario Actualizado Correctamente.",
+                                    "Estudiante Actualizado Correctamente.",
                                     HttpStatus.OK.value(),
                                     LocalDateTime.now()
                             )
@@ -380,10 +380,10 @@ public class StudentController {
                     @Parameter(name = "documentNumber", description = "Número de Documento del estudiante a obtener", required = true, in = ParameterIn.PATH)
             },
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Usuario encontrado.",
+                    @ApiResponse(responseCode = "200", description = "Estudiante encontrado.",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = StudentResponseCreate.class))),
-                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado",
+                    @ApiResponse(responseCode = "404", description = "Estudiante no encontrado",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = StudentResponseCreateErrorGeneric.class))),
                     @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
