@@ -1,8 +1,7 @@
 package com.sebastian.liceoyarah.ms.professors.controllers;
 
-import com.sebastian.liceoyarah.ms.professors.common.swagger.professors.ProfessorResponseCreate;
-import com.sebastian.liceoyarah.ms.professors.common.swagger.professors.ProfessorResponseCreateErrorFields;
-import com.sebastian.liceoyarah.ms.professors.common.swagger.professors.ProfessorResponseCreateErrorGeneric;
+import com.sebastian.liceoyarah.ms.professors.common.dtos.PaginationDto;
+import com.sebastian.liceoyarah.ms.professors.common.swagger.professors.*;
 import com.sebastian.liceoyarah.ms.professors.common.utils.ApiResponseConsolidation;
 import com.sebastian.liceoyarah.ms.professors.common.utils.CustomPagedResourcesAssembler;
 import com.sebastian.liceoyarah.ms.professors.common.utils.ErrorsValidationsResponse;
@@ -20,10 +19,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDateTime;
 
@@ -109,7 +115,51 @@ public class ProfessorController {
 
     }
 
-    //TODO FindAll
+    @PostMapping("/find-all")
+    @Operation(
+            summary = "Obtener todos los profesores",
+            description = "Obtener todos los profesores con paginación y también aplicando filtros",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Datos para la paginación y búsqueda",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationDto.class)
+                    )
+            )
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado de profesores.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseList.class))),
+            @ApiResponse(responseCode = "400", description = "Errores en los campos de paginación.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseListError.class)))
+    })
+    public ResponseEntity<ApiResponseConsolidation<Object>> findAll(
+            @Valid
+            @RequestBody PaginationDto paginationDto,
+            BindingResult result
+    ){
+
+        if (paginationDto.getPage() < 1) paginationDto.setPage(1); //Para controlar la página 0, y que la paginación arranque en 1.
+
+        Sort.Direction direction = paginationDto.getOrder().equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(paginationDto.getPage() - 1, paginationDto.getSize(), Sort.by(direction, paginationDto.getSort())); //Generando el esquema de paginación para aplicar y ordenamiento
+        Page<Professor> professor = professorService.findAll(paginationDto.getSearch(), pageable); //Aplicando la paginación JPA -> Incorporo el buscador
+        UriComponentsBuilder uriBuilder = ServletUriComponentsBuilder.fromCurrentRequestUri(); //Para la obtención de la URL
+
+        PagedModel<Professor> pagedModel = customPagedResourcesAssembler.toModel(professor, uriBuilder);
+
+        return ResponseEntity.ok(new ApiResponseConsolidation<>(
+                pagedModel,
+                new ApiResponseConsolidation.Meta(
+                        "Listado de profesores.",
+                        HttpStatus.OK.value(),
+                        LocalDateTime.now()
+                )
+        ));
+
+    }
 
     @GetMapping("/find-by-id/{id}")
     @Operation(

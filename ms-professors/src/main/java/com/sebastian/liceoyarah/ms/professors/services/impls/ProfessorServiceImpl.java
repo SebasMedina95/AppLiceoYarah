@@ -16,11 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,6 +33,7 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     private final GetUserMs getUserMs;
     private final StudentClientRest getStudentsMs;
+    private final GetPersonsMs getPersonsMs;
     private final ProfessorRepository professorRepository;
     private final SecureRandom random = new SecureRandom();
 
@@ -38,10 +41,12 @@ public class ProfessorServiceImpl implements ProfessorService {
     public ProfessorServiceImpl(
             GetUserMs getUserMs,
             StudentClientRest getStudentsMs,
+            GetPersonsMs getPersonsMs,
             ProfessorRepository professorRepository
     ){
         this.getUserMs = getUserMs;
         this.getStudentsMs = getStudentsMs;
+        this.getPersonsMs = getPersonsMs;
         this.professorRepository = professorRepository;
     }
 
@@ -161,7 +166,48 @@ public class ProfessorServiceImpl implements ProfessorService {
 
     @Override
     public Page<Professor> findAll(String search, Pageable pageable) {
-        return null;
+
+        logger.info("Obtener todos los profesores paginados y con filtro - MS Professor");
+
+        // Si tenemos criterio de búsqueda entonces hacemos validaciones
+        Page<Professor> professorPage;
+        List<String> personDocuments;
+
+        if (search != null && !search.isEmpty()) {
+
+            // Buscamos primero en el MS de personas para traer la información que coincida con el criterio
+            logger.info("Obtener todos los usuarios - Con criterio de búsqueda en MS Persons y Users");
+            personDocuments = getPersonsMs.getListPersonOfMsPersonsByCriterial(search);
+
+            // Ahora realizamos la búsqueda en este MS tanto con los ID hallados desde MS de Personas como
+            // con la posibilidad de que también haya un criterio adicional de coincidencia acá.
+            logger.info("Obtener todos los profesores - Aplicando la paginación luego de filtro");
+            professorPage = professorRepository.findFilteredProfessor(search, personDocuments, pageable);
+
+        }else{
+
+            // Si llegamos a este punto paginamos normal sin el buscador.
+            logger.info("Obtener todos los profesores - Sin criterio de búsqueda");
+            professorPage = professorRepository.findNoFilteredProfessor(pageable);
+
+        }
+
+        // Ajustamos los elementos hallados en el content para que aparezcan junto con la información
+        // que viene desde el MS de personas.
+        logger.info("Aplicamos contra llamado a MS Persons para adecuar response a Frontend");
+        List<Professor> userDtos = professorPage.getContent().stream()
+                .map(u -> {
+                    String personDocument = u.getDocumentNumber();
+                    Users user = getUserMs.getPersonOfMsPersons(personDocument);
+                    u.setUser(user);
+                    return u;
+                })
+                .toList();
+
+        // Retornamos los elementos con la paginación y filtro aplicado.
+        logger.info("Listado de personas obtenido con toda la data requerida");
+        return new PageImpl<>(userDtos, pageable, professorPage.getTotalElements());
+
     }
 
     @Override

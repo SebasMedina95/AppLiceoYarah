@@ -16,6 +16,7 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
     @Query("SELECT s FROM Student s WHERE s.documentNumber = :documentNumber")
     Optional<Student> findByNumberDocument(@Param("documentNumber") String documentNumber);
 
+    //? Listado con filtrado especializado
     @Query("SELECT s FROM Student s " +
             "WHERE (:search IS NULL OR :search = '' OR " +
             "LOWER(s.isbttsCode) LIKE LOWER(CONCAT('%', :search, '%')) OR " +

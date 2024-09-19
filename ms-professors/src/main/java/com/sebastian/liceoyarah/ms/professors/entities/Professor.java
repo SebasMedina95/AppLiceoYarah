@@ -38,8 +38,8 @@ public class Professor {
     @NotNull
     private String institutionalEmail;
 
-    @Column(name = "TYPE", nullable = false, length = 1 )
-    @Comment("Tipo de Profesor - 1 Planta o 2 Catedra")
+    @Column(name = "TYPE", nullable = false, length = 50 )
+    @Comment("Tipo de Profesor - Planta o Catedra")
     @Schema(description = "Tipo de Profesor")
     @NotNull
     private String type;
@@ -68,15 +68,15 @@ public class Professor {
     @NotNull
     private Boolean technicalProfessor;
 
-    @Column(name = "CORE", nullable = false, length = 1 )
-    @Comment("Core de enseñanza - 1 Primaria, 2 Bachillerato, 3 Media Técnica, 4 Mixto")
+    @Column(name = "CORE", nullable = false, length = 50 )
+    @Comment("Core de enseñanza - Primaria, Bachillerato, Media Tecnica, Mixto")
     @Schema(description = "Core enseñanza")
     @NotNull
     private String core;
 
-    @Column(name = "LABOR_DAY", nullable = false, length = 1 )
-    @Comment("Jornada Laboral")
-    @Schema(description = "Jornada laboral 1 Completa, 2 Mañana, 3 Tarde, 4 Nocturna, 5 Combinados")
+    @Column(name = "LABOR_DAY", nullable = false, length = 50 )
+    @Comment("Jornada Laboral - Dia, Tarde, Noche, Mixta")
+    @Schema(description = "Jornada laboral - Dia, Tarde, Noche, Mixta")
     @NotNull
     private String laborDay;
 

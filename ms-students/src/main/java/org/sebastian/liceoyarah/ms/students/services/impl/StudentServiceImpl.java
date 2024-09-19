@@ -195,13 +195,13 @@ public class StudentServiceImpl implements StudentService {
 
             // Ahora realizamos la búsqueda en este MS tanto con los ID hallados desde MS de Personas como
             // con la posibilidad de que también haya un criterio adicional de coincidencia acá.
-            logger.info("Obtener todos los deportistas - Aplicando la paginación luego de filtro");
+            logger.info("Obtener todos los estudiantes - Aplicando la paginación luego de filtro");
             studentPage = studentRepository.findFilteredStudent(search, personDocuments, pageable);
 
         }else{
 
             // Si llegamos a este punto paginamos normal sin el buscador.
-            logger.info("Obtener todos los deportistas - Sin criterio de búsqueda");
+            logger.info("Obtener todos los estudiantes - Sin criterio de búsqueda");
             studentPage = studentRepository.findNoFilteredStudent(pageable);
 
         }
