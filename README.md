@@ -65,7 +65,7 @@ dados los temas de OAuth2 y Spring Security; a continuación, están los micro s
 | Personas    | `Finalizado`              | ms-persons    | Micro servicio para la gestión de las diferentes personas, tales como estudiantes, usuarios, acudientes, profesores, empleados, entre otros.                        |
 | Usuarios    | `Parcialmente_Finalizado` | ms-users      | Micro servicio para la gestión de los usuarios, los usuarios son los que tendrán acceso al sistema y podrán ser estudiantes y profesores en primera instancia.      | 
 | Estudiantes | `Finalizado`              | ms-students   | Micro servicio para la gestión de los estudiantes, los estudiantes son usuarios, por lo que enlazamos este MS con el de Usuarios.                                   |
-| Profesores  | `En_Proceso`              | ms-professors | Micro servicio para la gestión de los profesores, los profesores son usuarios del sistema y no pueden ser estudiantes.                                              |
+| Profesores  | `Finalizado`              | ms-professors | Micro servicio para la gestión de los profesores, los profesores son usuarios del sistema y no pueden ser estudiantes.                                              |
 | Asignaturas | `Sin_Empezar`             | -             | Micro servicio para la gestión de las asignaturas, estará enlazada con los profesores para tomar apunte de que asignaturas puede dar cada docente.                  |
 | Documentos  | `Sin_Empezar`             | -             | Micro servicio para manejar la documentación, tal como documentos de identidad, fotografías, sanciones y comprobantes.                                              |
 | Grupos      | `Sin_Empezar`             | -             | Micro servicio para gestionar los grupos y los estudiantes que pertenencen a los grupos, a este punto, nos comunicamos con el micro de estudiantes y de profesores. |
@@ -106,6 +106,12 @@ docker-compose --project-name yarah_ms_users up --build -d
 ````dockerfile
 docker-compose --project-name yarah_ms_students up --build -d
 ````
+
+#### Micro servicio de profesores:
+* Para levantar ``ms-students`` nos ``ubicamos dentro del proyecto en su raíz`` en el proyecto y ejecutamos:
+````dockerfile
+docker-compose --project-name yarah_ms_professors up --build -d
+````
 El comando ejecutará el ``docker-compose`` con las configuraciones requeridas (usará como referencia el Dockerfile creado
 para cada aplicación en concreto), levantará la imágen, usará el volumen de datos en caso de haber, construira el contenedor 
 y lo levantará de manera detach (desacoplada).\
@@ -138,6 +144,12 @@ http://localhost:18882/business/swagger-ui/index.html
 ````dockerfile
 http://localhost:18883/business/swagger-ui/index.html
 ````
+
+* Microservicio de profesores (MS Professors) -> **ms-professors**.
+  Ingrese a la siguiente URL:
+````dockerfile
+http://localhost:18884/business/swagger-ui/index.html
+````
 -------------------------------
 
 ### Notas útiles del desarrollo:
@@ -157,7 +169,7 @@ http://localhost:18883/business/swagger-ui/index.html
 > si vamos a ejecutar en otra máquina, no estará demás crear un Backup de los INSERT SQL para poblar la base de datos, 
 > esta incomodidad nos toca porque no tenemos la BD en una nube.
 
-> Tengamos en cuenta que, a la fecha, 13 de Septiembre del 2024 no estamos haciendo Testing a la aplicación, una de las
+> Tengamos en cuenta que, a la fecha, 19 de Septiembre del 2024 no estamos haciendo Testing a la aplicación, una de las
 > configuraciones que hicimos para el Dockerfile omite este tema de las pruebas para poder generar el JAR, entonces, 
 > debemos ajustar más adelante este tema por buenas prácticas, todo lo que desarrollamos debe tener pruebas unitarias
 > pero solamente en la implementación del servicio, no vamos a probar utilidades ni controladores.
