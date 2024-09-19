@@ -1,5 +1,7 @@
 package com.sebastian.liceoyarah.ms.professors.services.impls;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sebastian.liceoyarah.ms.professors.clients.StudentClientRest;
 import com.sebastian.liceoyarah.ms.professors.clients.dtos.Students;
 import com.sebastian.liceoyarah.ms.professors.clients.dtos.Users;
@@ -19,11 +21,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProfessorServiceImpl implements ProfessorService {
@@ -51,6 +52,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Professor> create(CreateProfessorDto professor) {
 
         logger.info("Iniciando Acción - MS Professors - Creación de un profesor");
@@ -165,6 +167,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<Professor> findAll(String search, Pageable pageable) {
 
         logger.info("Obtener todos los profesores paginados y con filtro - MS Professor");
@@ -211,6 +214,7 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseWrapper<Professor> findById(Long id) {
 
         logger.info("Iniciando Acción - Obtener un profesor dado su ID - MS Professor");
@@ -244,16 +248,60 @@ public class ProfessorServiceImpl implements ProfessorService {
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Professor> update(Long id, UpdateProfessorDto professor) {
-        return null;
+
+        logger.info("Iniciando Acción - Actualizar un profesor dado su ID - MS Professor");
+        Optional<Professor> professorOptional = professorRepository.findById(id);
+
+        if( professorOptional.isPresent() ){
+
+            Professor professorDb = professorOptional.orElseThrow();
+
+            //? Validamos que no se repita la tarjeta profesional
+            Optional<Professor> cardTittleOptional =
+                    professorRepository.getProfessorByCardTittleForEdit(professor.getCardTittle(), id);
+            if( cardTittleOptional.isPresent() ){
+                logger.error("No se puede actualizar el profesor, Tarjeta Profesional ya existente: {}",
+                        professor.getCardTittle());
+                return new ResponseWrapper<>(
+                        null, "El profesor con la tarjeta profesional " + professor.getCardTittle() +
+                        " ya se encuentra registrado a nivel de su tarjeta"
+                );
+            }
+
+            //? Vamos a actualizar si llegamos hasta acá
+            professorDb.setType(professor.getType());
+            professorDb.setProffesionalTittle(professor.getProffesionalTittle());
+            professorDb.setCardTittle(professor.getCardTittle());
+            professorDb.setGroupDirector(professor.getGroupDirector());
+            professorDb.setTechnicalProfessor(professor.getTechnicalProfessor());
+            professorDb.setCore(professor.getCore());
+            professorDb.setLaborDay(professor.getLaborDay());
+            professorDb.setDescription(professor.getDescription());
+            professorDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
+            professorDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
+
+            logger.info("El profesor fue actualizado correctamente");
+            return new ResponseWrapper<>(professorRepository.save(professorDb), "Profesor Actualizado Correctamente");
+
+        }else{
+
+            logger.warn("El profesor por el ID no fue encontrado");
+            return new ResponseWrapper<>(null, "El profesor no fue encontrado");
+
+        }
+
     }
 
     @Override
+    @Transactional
     public ResponseWrapper<Professor> delete(Long id) {
         return null;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ResponseWrapper<Professor> findByDocument(Long documentNumber) {
         return null;
     }

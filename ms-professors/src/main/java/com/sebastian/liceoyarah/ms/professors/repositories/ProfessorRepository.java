@@ -19,6 +19,13 @@ public interface ProfessorRepository extends JpaRepository<Professor, Long>, Jpa
     @Query("SELECT p FROM Professor p WHERE p.cardTittle = :cardTittle")
     Optional<Professor> findByCardTittle(@Param("cardTittle") String cardTittle);
 
+    @Query("SELECT p FROM Professor p WHERE (UPPER(p.cardTittle) = UPPER(:cardTitle)) " +
+            "AND p.id <> :id")
+    Optional<Professor> getProfessorByCardTittleForEdit(
+            @Param("cardTitle") String cardTitle,
+            @Param("id") Long id
+    );
+
     //? Listado con filtrado especializado
     @Query("SELECT p FROM Professor p " +
             "WHERE p.status = true AND (" +

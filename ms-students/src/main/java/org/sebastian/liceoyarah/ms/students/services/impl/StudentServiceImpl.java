@@ -328,13 +328,13 @@ public class StudentServiceImpl implements StudentService {
             studentDb.setUserUpdated(dummiesUser); //! Ajustar cuando se implemente Security
             studentDb.setDateUpdated(new Date()); //! Ajustar cuando se implemente Security
 
-            logger.info("El usuario fue actualizado correctamente");
+            logger.info("El estudiante fue actualizado correctamente");
             return new ResponseWrapper<>(studentRepository.save(studentDb), "Estudiante Actualizado Correctamente");
 
         }else{
 
-            logger.warn("El usuario por el ID no fue encontrado");
-            return new ResponseWrapper<>(null, "El usuario no fue encontrado");
+            logger.warn("El estudiante por el ID no fue encontrado");
+            return new ResponseWrapper<>(null, "El estudiante no fue encontrado");
 
         }
 

@@ -8,6 +8,7 @@ import com.sebastian.liceoyarah.ms.professors.common.utils.ErrorsValidationsResp
 import com.sebastian.liceoyarah.ms.professors.common.utils.ResponseWrapper;
 import com.sebastian.liceoyarah.ms.professors.entities.Professor;
 import com.sebastian.liceoyarah.ms.professors.entities.dtos.create.CreateProfessorDto;
+import com.sebastian.liceoyarah.ms.professors.entities.dtos.update.UpdateProfessorDto;
 import com.sebastian.liceoyarah.ms.professors.services.ProfessorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -219,6 +220,87 @@ public class ProfessorController {
                         null,
                         new ApiResponseConsolidation.Meta(
                                 professor.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
+    @PutMapping("update-by-id/{id}")
+    @Operation(
+            summary = "Actualizar un profesor",
+            description = "Actualizar un profesor dado el ID",
+            parameters = {
+                    @Parameter(name = "id", description = "ID para la actualización", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profesor Actualizado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseCreate.class))),
+            @ApiResponse(responseCode = "406", description = "Errores en los campos de actualización.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseCreateErrorFields.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseCreateErrorGeneric.class))),
+    })
+    public ResponseEntity<ApiResponseConsolidation<Object>> update(
+            @Valid
+            @RequestBody UpdateProfessorDto professorRequest,
+            BindingResult result,
+            @PathVariable("id") String id
+    ){
+
+        if(result.hasFieldErrors()){
+            ErrorsValidationsResponse errors = new ErrorsValidationsResponse();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            errors.validation(result),
+                            new ApiResponseConsolidation.Meta(
+                                    "Errores en los campos de actualización",
+                                    HttpStatus.BAD_REQUEST.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        ResponseWrapper<Professor> professorUpdate;
+
+        //Validamos que el ID de la URL sea válido
+        try {
+            Long professorId = Long.parseLong(id);
+            professorUpdate = professorService.update(professorId, professorRequest);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( professorUpdate.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            professorUpdate.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Profesor Actualizado Correctamente.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                professorUpdate.getErrorMessage(),
                                 HttpStatus.BAD_REQUEST.value(),
                                 LocalDateTime.now()
                         )
