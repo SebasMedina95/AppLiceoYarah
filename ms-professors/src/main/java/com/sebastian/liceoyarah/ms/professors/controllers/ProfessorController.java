@@ -308,5 +308,131 @@ public class ProfessorController {
 
     }
 
+    @DeleteMapping("/delete-by-id/{id}")
+    @Operation(
+            summary = "Eliminar un profesor",
+            description = "Eliminar un profesor pero de manera lógica",
+            parameters = {
+                    @Parameter(name = "id", description = "ID del profesor a eliminar", required = true)
+            }
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profesor Eliminado Correctamente.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseCreate.class))),
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo.",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProfessorResponseCreateErrorGeneric.class))),
+    })
+    public ResponseEntity<ApiResponseConsolidation<Object>> delete(
+            @PathVariable("id") String id
+    ){
+
+        ResponseWrapper<Professor> professorUpdate;
+
+        try {
+            Long professorId = Long.parseLong(id);
+            professorUpdate = professorService.delete(professorId);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El ID proporcionado es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( professorUpdate.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            professorUpdate.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Profesor Eliminado Correctamente.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                professorUpdate.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
+    @GetMapping("/find-by-document/{documentNumber}")
+    @Operation(
+            summary = "Obtener profesor por Número de Documento",
+            description = "Obtener un profesor dado el Número de Documento",
+            parameters = {
+                    @Parameter(name = "documentNumber", description = "Número de Documento del profesor a obtener", required = true, in = ParameterIn.PATH)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Profesor encontrado.",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProfessorResponseCreate.class))),
+                    @ApiResponse(responseCode = "404", description = "Estudiante no encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProfessorResponseCreateErrorGeneric.class))),
+                    @ApiResponse(responseCode = "400", description = "Error al realizar la búsqueda",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ProfessorResponseCreateErrorGeneric.class)))
+            }
+    )
+    public ResponseEntity<ApiResponseConsolidation<Object>> findByDocument(
+            @PathVariable("documentNumber") String documentNumber
+    ){
+
+        ResponseWrapper<Professor> professor;
+
+        //Validamos que el ID que nos proporcionan por la URL sea válido
+        try {
+            Long professorDocumentNumber = Long.parseLong(documentNumber);
+            professor = professorService.findByDocument(professorDocumentNumber);
+        }catch (NumberFormatException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ApiResponseConsolidation<>(
+                            null,
+                            new ApiResponseConsolidation.Meta(
+                                    "El Número de Documento proporcionado para la búsqueda es inválido.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        if( professor.getData() != null ){
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponseConsolidation<>(
+                            professor.getData(),
+                            new ApiResponseConsolidation.Meta(
+                                    "Profesor obtenido por Número de Documento.",
+                                    HttpStatus.OK.value(),
+                                    LocalDateTime.now()
+                            )
+                    ));
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiResponseConsolidation<>(
+                        null,
+                        new ApiResponseConsolidation.Meta(
+                                professor.getErrorMessage(),
+                                HttpStatus.BAD_REQUEST.value(),
+                                LocalDateTime.now()
+                        )
+                ));
+
+    }
+
 
 }

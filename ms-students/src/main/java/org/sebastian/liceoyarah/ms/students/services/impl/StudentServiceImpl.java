@@ -344,6 +344,8 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     public ResponseWrapper<Student> delete(Long id) {
 
+        logger.info("Iniciando Acción - Eliminar un estudiante dado su ID - MS Students");
+
         try{
 
             Optional<Student> studentOptional = studentRepository.findById(id);

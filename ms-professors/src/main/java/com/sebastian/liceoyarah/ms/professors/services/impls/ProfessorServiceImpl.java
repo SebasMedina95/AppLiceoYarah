@@ -297,13 +297,72 @@ public class ProfessorServiceImpl implements ProfessorService {
     @Override
     @Transactional
     public ResponseWrapper<Professor> delete(Long id) {
-        return null;
+
+        logger.info("Iniciando Acción - Eliminar un profesor dado su ID - MS Professor");
+
+        try{
+
+            Optional<Professor> professorOptional = professorRepository.findById(id);
+
+            if( professorOptional.isPresent() ){
+
+                Professor professorDb = professorOptional.orElseThrow();
+
+                //? Vamos a actualizar si llegamos hasta acá
+                //? ESTO SERÁ UN ELIMINADO LÓGICO!
+                professorDb.setStatus(false);
+                professorDb.setUserUpdated("usuario123");
+                professorDb.setDateUpdated(new Date());
+
+                return new ResponseWrapper<>(professorRepository.save(professorDb), "Profesor Eliminado Correctamente");
+
+            }else{
+
+                return new ResponseWrapper<>(null, "El profesor no fue encontrado");
+
+            }
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar eliminar lógicamente profesor por ID, detalles ...", err);
+            return new ResponseWrapper<>(null, "El profesor no pudo ser eliminado");
+
+        }
+
     }
 
     @Override
     @Transactional(readOnly = true)
     public ResponseWrapper<Professor> findByDocument(Long documentNumber) {
-        return null;
+
+        logger.info("Iniciando Acción - Obtener un profesor dado su Número de Documento - MS Professors");
+
+        try{
+
+            Optional<Professor> professorOptional = professorRepository.findByNumberDocument(documentNumber.toString());
+
+            if( professorOptional.isPresent() ){
+                Professor professor = professorOptional.orElseThrow();
+                logger.info("Profesor obtenido por su Número de Documento");
+
+                String userDocumentMs = professor.getDocumentNumber();
+                Users userData = getUserMs.getPersonOfMsPersons(userDocumentMs);
+                professor.setUser(userData);
+
+                return new ResponseWrapper<>(professor, "Profesor encontrado por Número de Documento correctamente");
+
+            }
+
+            logger.info("El profesor no pudo ser encontrado con el Número de Documento {}", documentNumber);
+            return new ResponseWrapper<>(null, "El profesor no pudo ser encontrado por el Número de Documento " + documentNumber);
+
+        }catch (Exception err) {
+
+            logger.error("Ocurrió un error al intentar obtener profesor por Número de Documento, detalles ...", err);
+            return new ResponseWrapper<>(null, "El profesor no pudo ser encontrado por el Número de Documento");
+
+        }
+
     }
 
     public String generateRandomNumber() {
