@@ -1,4 +1,7 @@
-# LICEO YARAH #
+# APLICACIÓN LICEO YARAH #
+
+-------------------------------
+
 ### Desarrollado por: ###
 * **Desarrollador de Backend**: Juan Sebastian Medina Toro.
 * **Enlaces Comunicación**: [Enlace a Linkedin](https://www.linkedin.com/in/juan-sebastian-medina-toro-887491249/).
@@ -150,6 +153,58 @@ http://localhost:18883/business/swagger-ui/index.html
 ````dockerfile
 http://localhost:18884/business/swagger-ui/index.html
 ````
+-------------------------------
+### Envío de imágenes a Docker Hub
+Para el envío de imágenes a Docker Hub, teniendo la cuenta correspondiente, debemos crear el repositorio
+para cada uno de los proyectos (Microservicios), por tanto, para cada uno ejecutaremos los comandos 
+correspondientes para enviar las imágenes. Es importante destacar que, cada repositorio nos va quedar
+con una estructura ``usuario-docker/nombre-repo``, por tanto, las imágenes que tenemos deben tener este
+nombre para que al hacer el push tome el repo que corresponde, por ende, tenemos que generar una especie
+de "copia" de la imagen pero con el nombre con el esquema mencionado, a continuación, se  muestra más
+claro este punto
+
+* Microservicio de personas (MS Persons) -> **ms-persons**.
+Nos paramos en el proyecto y ejecutamos el comando:
+````dockerfile
+docker tag liceoyarah-ms-persons-image sebasmedina95/yarah-ms-persons
+````
+Explicación: liceoyarah-ms-persons-image es la imagen que hemos generado localmente, esta será el tag que usaremos,
+y sebasmedina95/yarah-ms-persons representa al usuario de docker y el nombre que le dimos al repositorio. **En 
+conclusión, hemos creado una imagen copia con el nombre ``sebasmedina95/yarah-ms-persons``**.
+Una vez generada la copia, ejecutamos el comando:
+````dockerfile
+docker push sebasmedina95/yarah-ms-persons
+````
+Nota importante: Si dado el caso nos dice que no tenemos acceso porque no estamos logeados, debemos ejecutar
+el comando ``docker login`` y allí damos el usuario y la contraseña de nuestra cuenta de Docker para poder
+proceder.
+
+Repetimos el proceso con los demás proyectos:
+````dockerfile
+docker tag liceoyarah-ms-users-image sebasmedina95/yarah-ms-users
+docker tag liceoyarah-ms-students-image sebasmedina95/yarah-ms-students
+docker tag liceoyarah-ms-professors-image sebasmedina95/yarah-ms-professors
+````
+
+````dockerfile
+docker push sebasmedina95/yarah-ms-users
+docker push sebasmedina95/yarah-ms-students
+docker push sebasmedina95/yarah-ms-professors
+````
+
+-------------------------------
+### Revisión para trabajar en Kubernets
+Para trabajar usando una interfaz los temas de Kubernets (K8s) debemos ejecutar el comando:
+````dockerfile
+minikube dashboard --url
+````
+Este comando me va a generar una URL que se verá como la siguiente:
+````dockerfile
+http://127.0.0.1:57616/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
+````
+Debe estar corriendo para poder mantener la URL, la pegamos en un navegador y tenemos un dashboard para
+trabajar todo el tema de Kubernets; también será especificados algunos comandos de ser el caso.
+
 -------------------------------
 
 ### Notas útiles del desarrollo:
