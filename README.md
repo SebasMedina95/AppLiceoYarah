@@ -230,8 +230,9 @@ A continuación haremos el paso a paso para ir generando cada estructura, el eje
 se hará con el microservicio de personas, pero, como se implemente este no habrá pierde para los demás
 cuando se estén haciendo:
 
-| **CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA LA BD (Imperativamente)**  | 
-|--------------------------------------------------------------------------|
+--------------------------------
+**CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA LA BD (Imperativamente)**
+
 De manera imperactiva, debemos crear el archivo de deployment, en cada microservicio debemos de crear
 una carpeta de deployments donde ubicaremos el deployment de desarrolo y el de producción, por tanto,
 ubicados en el de desarrollo para la documentación ejecutamos el comando:
@@ -279,8 +280,9 @@ kubectl get services
 Como podemos ver, se nos generó como una especie de IP "Estática" en la columna CLUSTER-IP, esta IP se mantendrá así A MENOS de que eliminemos
 el servicio y lo volvamos a crear, importante a tener en cuenta esto. También tenemos el hostname que se representa como la columna NAME.
 
-| **CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA EL MICRO SERVICIO (Imperativamente)** | 
-|-------------------------------------------------------------------------------------|
+-------------------------------
+**CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA EL MICRO SERVICIO (Imperativamente)**
+
 * **NOTA 1 ===> LA IMAGEN YA TIENE QUE ESTAR MONTADA EN EL DOCKER HUB.**\
 * **NOTA 2 ===> Debemos estar parados en la carpeta donde colocaremos los archivos.**\
 * **NOTA 3 ===> Comunicación con Docker Hub, debemos estar logeados, repo: sebasmedina95/yarah-ms-persons:latest.**
@@ -329,8 +331,9 @@ Con base a lo anterior, para la base de datos, entonces nos quedaría algo como:
 * Contraseña: 1234
 El Host podría variar según la IP que nos dé el Kubernets.
 
-| **¿CÓMO ACTUALIZAMOS LAS IMÁGENES Y LAS USAMOS EN KUBERNETS? - (Imperativamente)** | 
-|-------------------------------------------------------------------------------------|
+--------------------------
+**¿CÓMO ACTUALIZAMOS LAS IMÁGENES Y LAS USAMOS EN KUBERNETS? - (Imperativamente)**
+
 Antes de comenzar, asegurarnos de estar logueados a Docker Hub.
 Ocurrirá posiblemente que, tengamos que actualizar alguna funcionalidad de algún micro que tengamos desarrollado, el 
 proceso deberá dividirse en 5 etapas claves para no perdernos durante el flujo, las 5 etapas son las siguientes:
