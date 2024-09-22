@@ -201,8 +201,12 @@ caso local de este proyecto el minikube, para ello, debemos ejecutar el comando:
 ``Nota:`` No esta de más que revisemos el estado de minikube con el comando ``minikube status``
 
 ````dockerfile
-minikube start --driver=docker
+minikube start --driver=hyperv
 ````
+Aunque podemos trabajar con la de docker, a veces tenemos problemas para la generación artificial
+de URLs para el tema de las pruebas, por tanto, usemos hyperv, podemos usarlo sin problema por la
+naturaleza de la instalación de la aplicación de Docker y la configuración moderna de mi máquina
+que soporta esto.\
 Ahora, para tener una interfaz para trabajar un poco más amigable el tema debemos ejecutar el comando:
 ````dockerfile
 minikube dashboard --url
@@ -212,12 +216,186 @@ Este comando me va a generar una URL que se verá como la siguiente:
 http://127.0.0.1:57616/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
 ````
 Debe estar corriendo para poder mantener la URL, la pegamos en un navegador y tenemos un dashboard para
-trabajar todo el tema de Kubernets; también será especificados algunos comandos de ser el caso. En línea
-de comandos empezamos a crear los despliegues:
+trabajar todo el tema de Kubernets.
+
+<<**INSTRUCTIVO DE COMANDOS PARA TRABAJO CON KUBERNETS (K8s)**>>
+
+Debemos generar el Deployment para la base de datos y también para la aplicación, para este caso, se
+hacen dos pasos diferentes pero que se empalman para trabajar en conjunto con base a las configuraciones
+internas de las aplicaciones (**Acá empieza a tener mucho sentido la rigidez de los nombres que le
+dimos a todo el proceso y configuraciones, los K8s actuan con un DNS interno y reglas de nombres como
+si fueran Hosts, esto ayudará mucho a la hora de comunicar las aplicaciones**).
+
+A continuación haremos el paso a paso para ir generando cada estructura, el ejemplo de la documentación
+se hará con el microservicio de personas, pero, como se implemente este no habrá pierde para los demás
+cuando se estén haciendo:
+
+| **CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA LA BD (Imperativamente)**  | 
+|--------------------------------------------------------------------------|
+De manera imperactiva, debemos crear el archivo de deployment, en cada microservicio debemos de crear
+una carpeta de deployments donde ubicaremos el deployment de desarrolo y el de producción, por tanto,
+ubicados en el de desarrollo para la documentación ejecutamos el comando:
 
 ````dockerfile
-kubectl create deployment yarah-db-ms-persons --image=postgres:16.4 --port=5432
+kubectl create deployment yarah-db-ms-persons --image=postgres:16.4 --port=5432 --dry-run=client -o yaml > deployment-yarah-db-ms-persons.yaml
 ````
+Con el comando creamos un deployment y le damos el nombre que le dimos en términos de base de datos al proyecto, es importantísimo esta parte
+porque ya tenemos configuraciones internas en las properties con eso, le damos el nombre de ``yarah-db-ms-persons`` para el caso del micro de
+personas, luego con ``--image`` definimos la imagen de docker a usar, con el ``--port`` definimos el puerto, con el ``--dry-run`` hacemos la
+separación para generar el archivo y con el ``-o`` defino el tipo de archivo, que será YAML y le damos el nombre al archivo de despliegue, para
+este caso, le colocamos el nombre de ``deployment-yarah-db-ms-persons.yaml``.
+
+En este archivo generamos las configuraciones generales así como las configuraciones de variables de entorno si dado el caso son requeridas, 
+ahora, una vez configurado el archivo, debemos aplicarlo, para aplicarlo usamos el comando:
+
+````dockerfile
+kubectl apply -f .\deployment-yarah-db-ms-persons.yaml
+````
+Donde con el comando ``apply`` generamos la aplicación, el ``-f`` definimos el archivo y luego el nombre del archivo.
+Luego de ejecutar el comando anterior, mirando los pods deberíamos observar que todo está OK, en la interfaz veremos la señal verde de que todo
+está bien, también, ejecutando el comando ``kubectl get pods`` veo que en la columna READY 1/1. Podemos verificar en los logs si todo está bien
+usando el comando:
+````dockerfile
+kubectl logs yarah-db-ms-persons-4redf548b0-mmt4z
+````
+Asumiendo que el NAME del pod se llama kubectl logs ``yarah-db-ms-persons-4redf548b0-mmt4z``
+Ahora, debemos generar el servicio de exposición para poder usar lo anteriormente realizado, poder exponerlo tanto al exterior en el caso
+de consumirlo por fuera de Kubernets como en la red interna, entonces, ejecutamos el comando:
+````dockerfile
+kubectl expose deployment yarah-db-ms-persons --port=5432 --type=NodePort
+````
+En este comando, exponemos el deployment ``yarah-db-ms-persons`` por el puerto de trabajo para BD Postgres que es ``5432`` y el tipo,
+acá es importante, le decimos ``NodePort``, dentro de la configuración del deployment definimos unos puertos de servicio para comunicación
+externa, esto lo hacemos por temas de desarrollo para generar conexión de BD por fuera y ver la base de datos, entonces usamos puertos
+por nodo.
+
+Literalmente, el yarah-db-ms-persons nos va quedar como una especie de hostname. Es importante que coloquemos el nombre que le dimos en el properties
+en la propertie spring.datasource.url=jdbc:postgresql://yarah-db-ms-persons:5432/yarah_ms_persons_db.
+
+Verifiquemos que si se creo con el comando:
+````dockerfile
+kubectl get services
+````
+Como podemos ver, se nos generó como una especie de IP "Estática" en la columna CLUSTER-IP, esta IP se mantendrá así A MENOS de que eliminemos
+el servicio y lo volvamos a crear, importante a tener en cuenta esto. También tenemos el hostname que se representa como la columna NAME.
+
+| **CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA EL MICRO SERVICIO (Imperativamente)** | 
+|-------------------------------------------------------------------------------------|
+* **NOTA 1 ===> LA IMAGEN YA TIENE QUE ESTAR MONTADA EN EL DOCKER HUB.**\
+* **NOTA 2 ===> Debemos estar parados en la carpeta donde colocaremos los archivos.**\
+* **NOTA 3 ===> Comunicación con Docker Hub, debemos estar logeados, repo: sebasmedina95/yarah-ms-persons:latest.**
+
+Aunque podemos generar un comando directo para el tema, vamos a crear también un YAML de configuración para este tema, para mantener la misma
+estructura que la base de datos, para ello, ejecutamos el comando:
+````dockerfile
+kubectl create deployment yarah-ms-persons --image=sebasmedina95/yarah-ms-persons:latest --port=18881 --dry-run=client -o yaml > deployment-yarah-ms-persons.yaml
+````
+Al igual que con la base de datos, creamos ahora el despliegue y le damos el nombre de yarah-ms-persons respetando el nombre que le dimos
+al proyecto en las properties, con el --image definimos la imagen que se usará, **USAREMOS UNA IMAGEN QUE SE ENCUENTRA YA SUBIDA EN DOCKER HUB**,
+debemos especificar la versión. Luego definimos el --port que sería el puerto que le dimos en las propiedades de la aplicación y generamos
+los otros campos para el archivo. Luego de lo anterior aplicamos con el comando:
+````dockerfile
+kubectl apply -f .\deployment-yarah-ms-persons.yaml
+````
+Ahora, debemos exponer el servicio así como lo hicimos con la base de datos, usamos el comando.
+````dockerfile
+kubectl expose deployment yarah-ms-persons --port=18881 --type=LoadBalancer
+````
+Para este caso, a diferencia del anterior, usamos el balanceador de cargas LoadBalancer. Confirmamdos revisando los servicios usando
+el comando:
+````dockerfile
+kubectl get services
+````
+Como podemos ver, ahora nos aparece el microservicio allí, pero, con un detalle particular, si vemos la columna EXTERNAL-IP, 
+tenemos al micro con un <pending>, y en la parte de PORTS tenemos el puerto asignado con : otro puerto especial. Ahora, lo 
+que requerimos es generar una IP que se conecte a lo que ya tenemos desplegado en Kubernets, para ello, ejecutamos el comando:
+````dockerfile
+minikube service yarah-ms-persons --url
+````
+Al ejecutar el comando anterior, nos va generar una URL muy parecida a esta: http://172.24.7.212:31991, toda la ejecución es 
+"local", nos da la IP para conectarnos a nivel de Kubernets y el puerto, ahora probando nuevamente los End Point de MS Persons 
+pero con esta URL debería poder obtener resultados.
+``NOTA => Para acceder a la base de datos de Kubernets desde fuera, desde el deployment debimos de configurar la exposición del puerto``, 
+luego, cuando obtenemos la URL de la aplicación, también podemos obtener la URL de la base de datos, de esta manera, podemos realizar 
+la configuración y conectarnos, el comando sería similar:
+````dockerfile
+minikube service yarah-db-ms-persons --url
+````
+Con base a lo anterior, para la base de datos, entonces nos quedaría algo como:
+* Host: 172.24.7.212
+* Port: 30001
+* Database: yarah_ms_persons_db
+* Nombre de usuario: postgres
+* Contraseña: 1234
+El Host podría variar según la IP que nos dé el Kubernets.
+
+| **¿CÓMO ACTUALIZAMOS LAS IMÁGENES Y LAS USAMOS EN KUBERNETS? - (Imperativamente)** | 
+|-------------------------------------------------------------------------------------|
+Antes de comenzar, asegurarnos de estar logueados a Docker Hub.
+Ocurrirá posiblemente que, tengamos que actualizar alguna funcionalidad de algún micro que tengamos desarrollado, el 
+proceso deberá dividirse en 5 etapas claves para no perdernos durante el flujo, las 5 etapas son las siguientes:
+
+1. **Ajuste de cambios**
+   Ajustamos los cambios y los probamos para no tener inconvenientes luego.
+2. **Actualización de imagen local**
+   Aplicamos el comando:
+   ````dockerfile
+   docker build -t liceoyarah-ms-persons-image . -f .\Dockerfile
+   ````
+3. Debemos etiquetar nuevamente. Generación de copia con el nombre de la imagen en repositorio Docker Hub
+   ````dockerfile
+   docker tag liceoyarah-ms-persons-image sebasmedina95/yarah-ms-persons:v1.0.1
+   ````
+   **NOTA IMPORTANTÍSIMA**: Para poder aplicar el proceso de actualización en Kubernets, necesitamos "forzar" que tome 
+el nuevo cambio, para ello, necesitamos definir un nombre distintivo y asegurarnos de que no nos quede la última versión, 
+para esto le colocamos el ``:v1.0.1``. Recordemos que la imagen la habíamos llamado ``inicialmente liceoyarah-ms-persons-image``,
+el ``sebasmedina95/yarah-ms-persons`` es como se llama en el repo de Docker Hub y debemos adjuntar la versión.
+
+4. Actualización de imagen en el repositorio Docker Hub
+   Ejecutamos el comando para subir la imagen actualizada:
+   ````dockerfile
+   docker push sebasmedina95/yarah-ms-persons:v1.0.1
+   ````
+   ``NOTA:`` Debemos respetar el tema de la versión, para que nos aparezca la diferencia en el repo de Docker Hub.
+5. Revisión del pod que está usando actualmente en el Kubernets y actualización:
+   * Antes de actualizar, revisemos que versión se está ejecutando (Asumamos que la última versión se llamaba v1.0.0)
+     Ejecutamos el comando para detectar los pods:
+     ````dockerfile
+     kubectl get pods
+     ````
+   * Tomamos el NAME del pod requerido y vemos los detalles con el comando (Asuma yarah-ms-persons-548f447475-8lclz 
+     como el NAME):
+     ````dockerfile
+     kubectl describe pod yarah-ms-persons-548f447475-8lclz
+     ````
+   * Nos dirigimos al apartado Containers y la propiedad Image. Al revisar, veremos la última versión, algo del tipo 
+     **usuario-docker/nombre-imagen:v1.0.0** Ahora, sabiendo que tenemos la imagen actualizada en Docker Hub con una etiqueta 
+     diferente, ejecutamos el comando de actualización:
+     ````dockerfile
+     kubectl set image deployment yarah-ms-persons yarah-ms-persons=sebasmedina95/yarah-ms-persons:v1.0.1
+     ````
+     El comando lo que hace es que actualizamos la imagen, le digo el nombre de actualización que vendría siendo ``yarah-ms-persons`` 
+     (conservemos el mismo nombre para más adelante, en futuras actualizaciones, no se nos vuelva un caos el tema de identificación, 
+     lo más importante es distinguir que el elemento distintivo principal será el tag que se asignará, esta parte del tag se ve un 
+     poco más adelante en este mismo apartado, pero para consideración), luego digo el nombre del contenedor, que viene siendo en 
+     la parte del ``Containers cuando le di describe anteriormente el nombre donde esta la imagen de apuntamiento a Docker Hub``, en 
+     este caso se llama ``yarah-ms-persons``, luego la igualación es al Docker Hub con la imagen y tag actualizado que para este caso
+     sería **sebasmedina95/yarah-ms-persons:v1.0.1**. Si todo sale bien, debe aparecernos en la consola la respuesta: 
+     ``deployment.apps/yarah-ms-persons image updated``.
+   * Revisamos colocando los comandos:
+     ````dockerfile
+     kubectl get pods
+     ````
+   * Si observamos bien, el NAME del pod incluso cambió, es una buena señal, ahora, tenemos el NAME: yarah-ms-persons-7cb5d7ffd-r7qxr, 
+     ahora, verificamos en la usando el comando de describe pero esta vez con el nuevo pod:
+     ````dockerfile
+     kubectl describe pod yarah-ms-persons-7cb5d7ffd-r7qxr
+     ````
+     Podemos apreciar ahora que, en el apartado de Containers (Donde conservamos el nombre yarah-ms-persons) en la parte de Image 
+     ahora tenemos el apuntamiento a la imagen actualizada en nuestro Docker Hub, **el sebasmedina95/yarah-ms-persons:v1.0.1**. Incluso, 
+     en el apartado de Events vemos que se dercargo la imagen actualizada del Docker Hub, **_esto también nos indica que la actualización 
+     se realizó de manera correcta_**.
+     
 
 -------------------------------
 
@@ -242,6 +420,13 @@ kubectl create deployment yarah-db-ms-persons --image=postgres:16.4 --port=5432
 > configuraciones que hicimos para el Dockerfile omite este tema de las pruebas para poder generar el JAR, entonces, 
 > debemos ajustar más adelante este tema por buenas prácticas, todo lo que desarrollamos debe tener pruebas unitarias
 > pero solamente en la implementación del servicio, no vamos a probar utilidades ni controladores.
+
+> **Sobre Kubernets**: Si observamos en nuestro Docker Desktop, vemos en la opción de imágenes que se nos creo una nueva con 
+> el nombre asociado para el Docker Hub, esto no genera conflicto, sin embargo, vemos que la que tenemos en local y la que 
+> se creo quedan en un estado de Unused, para evitar esta parte, eliminemos la que creamos para subir a Docker Hub y podríamos 
+> ejecutar el docker-compose.yml para volver a generar la imagen actualizada junto con el proyecto y su contenedor,
+> esto con la finalidad de que nos quede actualizado el ambiente local. Sin embargo, al hacer pruebas, por medio de la red 
+> interna y la conexión de nombres en las properties y archivos de configuración, aún sigue funcionando.
 
 
 
