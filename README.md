@@ -168,9 +168,10 @@ Nos paramos en el proyecto y ejecutamos el comando:
 ````dockerfile
 docker tag liceoyarah-ms-persons-image sebasmedina95/yarah-ms-persons
 ````
-Explicación: liceoyarah-ms-persons-image es la imagen que hemos generado localmente, esta será el tag que usaremos,
-y sebasmedina95/yarah-ms-persons representa al usuario de docker y el nombre que le dimos al repositorio. **En 
-conclusión, hemos creado una imagen copia con el nombre ``sebasmedina95/yarah-ms-persons``**.
+Explicación: liceoyarah-ms-persons-image es la imagen que hemos generado localmente (la copia por así decirlo), 
+esta será el tag que usaremos, y sebasmedina95/yarah-ms-persons representa al usuario de docker y el nombre que 
+le dimos al repositorio (es decir que cuando generamos el repo en Docker Hub nos quedo ese nombre). 
+**En conclusión, hemos creado una imagen copia con el nombre ``sebasmedina95/yarah-ms-persons``**.
 Una vez generada la copia, ejecutamos el comando:
 ````dockerfile
 docker push sebasmedina95/yarah-ms-persons
@@ -194,7 +195,15 @@ docker push sebasmedina95/yarah-ms-professors
 
 -------------------------------
 ### Revisión para trabajar en Kubernets
-Para trabajar usando una interfaz los temas de Kubernets (K8s) debemos ejecutar el comando:
+Para trabajar usando una interfaz los temas de Kubernets (K8s) debemos primeramente iniciar, para el 
+caso local de este proyecto el minikube, para ello, debemos ejecutar el comando:
+
+``Nota:`` No esta de más que revisemos el estado de minikube con el comando ``minikube status``
+
+````dockerfile
+minikube start --driver=docker
+````
+Ahora, para tener una interfaz para trabajar un poco más amigable el tema debemos ejecutar el comando:
 ````dockerfile
 minikube dashboard --url
 ````
@@ -203,7 +212,12 @@ Este comando me va a generar una URL que se verá como la siguiente:
 http://127.0.0.1:57616/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/
 ````
 Debe estar corriendo para poder mantener la URL, la pegamos en un navegador y tenemos un dashboard para
-trabajar todo el tema de Kubernets; también será especificados algunos comandos de ser el caso.
+trabajar todo el tema de Kubernets; también será especificados algunos comandos de ser el caso. En línea
+de comandos empezamos a crear los despliegues:
+
+````dockerfile
+kubectl create deployment yarah-db-ms-persons --image=postgres:16.4 --port=5432
+````
 
 -------------------------------
 
