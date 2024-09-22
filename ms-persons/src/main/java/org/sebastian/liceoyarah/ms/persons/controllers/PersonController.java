@@ -60,8 +60,7 @@ public class PersonController {
             @ApiResponse(responseCode = "406", description = "Errores en los campos de creación.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorFields.class))),
-            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
-                    "El número de documento proporcionado es inválido.",
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class))),
     })
@@ -333,8 +332,7 @@ public class PersonController {
             @ApiResponse(responseCode = "406", description = "Errores en los campos de creación.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorFields.class))),
-            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
-                    "El número de documento proporcionado es inválido. El ID proporcionado para actualizar es inválido.",
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class))),
     })
@@ -413,8 +411,7 @@ public class PersonController {
             @ApiResponse(responseCode = "200", description = "Persona Eliminada Correctamente.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreate.class))),
-            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo: " +
-                    "El ID proporcionado para eliminar es inválido.",
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class))),
     })
@@ -478,7 +475,7 @@ public class PersonController {
             @ApiResponse(responseCode = "200", description = "Ids detectados para filtrado.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseIdsList.class))),
-            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error, incluyendo.",
+            @ApiResponse(responseCode = "400", description = "Cualquier otro caso de error.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = PersonResponseCreateErrorGeneric.class))),
     })
