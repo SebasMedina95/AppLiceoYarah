@@ -294,7 +294,7 @@ kubectl create deployment yarah-ms-persons --image=sebasmedina95/yarah-ms-person
 ````
 Al igual que con la base de datos, creamos ahora el despliegue y le damos el nombre de yarah-ms-persons respetando el nombre que le dimos
 al proyecto en las properties, con el --image definimos la imagen que se usará, **USAREMOS UNA IMAGEN QUE SE ENCUENTRA YA SUBIDA EN DOCKER HUB**,
-debemos especificar la versión. Luego definimos el --port que sería el puerto que le dimos en las propiedades de la aplicación y generamos
+``debemos especificar la versión``. Luego definimos el ``--port que sería el puerto que le dimos en las propiedades de la aplicación`` y generamos
 los otros campos para el archivo. Luego de lo anterior aplicamos con el comando:
 ````dockerfile
 kubectl apply -f .\deployment-yarah-ms-persons.yaml
@@ -398,7 +398,27 @@ el ``sebasmedina95/yarah-ms-persons`` es como se llama en el repo de Docker Hub 
      ahora tenemos el apuntamiento a la imagen actualizada en nuestro Docker Hub, **el sebasmedina95/yarah-ms-persons:v1.0.1**. Incluso, 
      en el apartado de Events vemos que se dercargo la imagen actualizada del Docker Hub, **_esto también nos indica que la actualización 
      se realizó de manera correcta_**.
-     
+
+--------------------------------
+**CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA LA BD Y MS (Declarativamente)**
+Esta manera es un poco más sencilla que la anterior y es la más usada en el mercado, por tanto, debemos generar los archivos
+tanto para la base de datos como para la aplicación, empecemos con la base de datos, para esto, debemos ejecutar el siguiente
+comando para que me entregue el archivo (Estos si los vamos a crear más a nivel de la raíz de cada proyecto), estando
+en la raíz del proyecto requerido ejecutamos:
+````dockerfile
+kubectl get services yarah-db-ms-persons -o yaml > svc-yarah-db-ms-persons.yml
+````
+Con el comando anterior decimos que, donde estamos ubicados genere un archivo de servicio YML a partir del ``servicio que ya
+tenemos que se llama yarah-db-ms-persons`` que es el de base de datos, decimos que es un ``archivo yaml`` y en la salida le damos
+un nombre que, en este caso, ``se llamará svc-yarah-db-ms-persons.yml``. Aplicamos esta misma estrategia para el MS con la 
+aplicación, es decir, en este ejemplo, el de personas:
+````dockerfile
+kubectl get services yarah-ms-persons -o yaml > svc-yarah-ms-persons.yml
+````
+Ahora, lo único que requerimos es aplicar la configuración de los archivos YAML definidos, pero antes, si ya
+tenemos un deployment con estos lo debemos remover usando el comando ``kubectl delete -f .\deployment-yarah-ms-persons.yaml``
+y luego con el comando ``kubectl apply -f .\deployment-yarah-ms-persons.yaml``. **No olvidemos que para el paso anterior 
+debemos de estar estar en la carpeta donde tenemos los archivos deployment para ejecutar los comandos**.
 
 -------------------------------
 
@@ -424,12 +444,20 @@ el ``sebasmedina95/yarah-ms-persons`` es como se llama en el repo de Docker Hub 
 > debemos ajustar más adelante este tema por buenas prácticas, todo lo que desarrollamos debe tener pruebas unitarias
 > pero solamente en la implementación del servicio, no vamos a probar utilidades ni controladores.
 
-> **Sobre Kubernets**: Si observamos en nuestro Docker Desktop, vemos en la opción de imágenes que se nos creo una nueva con 
+-------------------------------------
+## INFORMACIÓN EXTRA SOBRE K8s ##
+
+> **Sobre Kubernets [1]**: Si observamos en nuestro Docker Desktop, vemos en la opción de imágenes que se nos creo una nueva con 
 > el nombre asociado para el Docker Hub, esto no genera conflicto, sin embargo, vemos que la que tenemos en local y la que 
 > se creo quedan en un estado de Unused, para evitar esta parte, eliminemos la que creamos para subir a Docker Hub y podríamos 
 > ejecutar el docker-compose.yml para volver a generar la imagen actualizada junto con el proyecto y su contenedor,
 > esto con la finalidad de que nos quede actualizado el ambiente local. Sin embargo, al hacer pruebas, por medio de la red 
 > interna y la conexión de nombres en las properties y archivos de configuración, aún sigue funcionando.
+
+> **Sobre Kubernets [2]**: Toda la sección Imperativa que tenemos en este README es por si queremos realizar las ejecuciones
+> usando línea de comandos, son comandos claramente definidos para la aplicación, sin embargo, vamos a crear archivos YAML
+> para contener allí la configuración y solo sea correr con un comando lo que requiramos para el tema. Es importante aclarar
+> esto ya que la forma más general de trabajo es de manera **DECLARATIVA**, es decir con los archivos de configuración YAML.
 
 
 

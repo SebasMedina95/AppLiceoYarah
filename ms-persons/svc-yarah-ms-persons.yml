@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yarah-ms-persons
+spec:
+  ports:
+  - port: 18881
+    protocol: TCP
+    targetPort: 18881
+  selector:
+    app: yarah-ms-persons
+  type: LoadBalancer
+

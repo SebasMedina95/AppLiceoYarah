@@ -13,7 +13,7 @@ spec:
         app: yarah-ms-persons
     spec:
       containers:
-      - image: sebasmedina95/yarah-ms-persons:latest
+      - image: sebasmedina95/yarah-ms-persons:v1.0.1
         name: yarah-ms-persons
         ports:
         - containerPort: 18881
