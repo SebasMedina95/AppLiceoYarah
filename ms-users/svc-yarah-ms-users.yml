@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yarah-ms-users
+spec:
+  ports:
+  - port: 18882
+    protocol: TCP
+    targetPort: 18882
+  selector:
+    app: yarah-ms-users
+  type: LoadBalancer
+

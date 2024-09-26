@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yarah-ms-users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yarah-ms-users
+  template:
+    metadata:
+      labels:
+        app: yarah-ms-users
+    spec:
+      containers:
+      - image: sebasmedina95/yarah-ms-users:latest
+        name: yarah-ms-users
+        ports:
+        - containerPort: 18882

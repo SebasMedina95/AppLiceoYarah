@@ -400,7 +400,9 @@ el ``sebasmedina95/yarah-ms-persons`` es como se llama en el repo de Docker Hub 
      se realizó de manera correcta_**.
 
 --------------------------------
-**CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA LA BD Y MS (Declarativamente)**
+## **CREACIÓN Y CONFIGURACIÓN DE DEPLOYMENT PARA LA BD Y MS (Declarativamente)**
+
+`` << V1 >> ``
 Esta manera es un poco más sencilla que la anterior y es la más usada en el mercado, por tanto, debemos generar los archivos
 tanto para la base de datos como para la aplicación, empecemos con la base de datos, para esto, debemos ejecutar el siguiente
 comando para que me entregue el archivo (Estos si los vamos a crear más a nivel de la raíz de cada proyecto), estando
@@ -419,6 +421,31 @@ Ahora, lo único que requerimos es aplicar la configuración de los archivos YAM
 tenemos un deployment con estos lo debemos remover usando el comando ``kubectl delete -f .\deployment-yarah-ms-persons.yaml``
 y luego con el comando ``kubectl apply -f .\deployment-yarah-ms-persons.yaml``. **No olvidemos que para el paso anterior 
 debemos de estar estar en la carpeta donde tenemos los archivos deployment para ejecutar los comandos**.
+
+`` << V2 >> **LA MANERA MÁS CÓMODA DE IMPLEMENTACIÓN** ``
+Básicamente, creamos el deployment tanto para la base de datos como para la aplicación, usamos una
+carpeta que podemos llamar deployments a nivel de la raíz de la aplicación/microservicio, luego en
+una subcarpeta llamada ``dev`` para los deployment de desarrollo creo los archivos YAML, genero
+la configuración correspondiente (guía elementos actuales) y luego, en la raíz de la aplicación
+creamos los servicios, uno para la base de datos y la otra para la aplicación/microservicio, luego,
+debemos correr los archivos, empecemos con los deployments, nos dirigimos a la carpeta y aplicamos
+los cambios con los comandos (C/U):
+````dockerfile
+kubectl apply -f .\deployment-yarah-db-ms-users.yaml
+kubectl apply -f .\deployment-yarah-ms-users.yaml
+````
+``Nota``, si se nos crea los services por defecto en K8s eliminemoslos ya que los vamos a crear a continuación
+con el archivo de configuración, ahora, ejecutamos los siguientes comandos para (C/U):
+````dockerfile
+kubectl apply -f .\svc-yarah-db-ms-users.yml -f .\svc-yarah-ms-users.yml
+````
+``Nota``, acá ejecutamos los dos servicios en una misma línea, es válido, también los deployments los pudimos
+ejecutar de esta manera. Ahora, verificamos que esten bien sea por el describe o por la UI y luego 
+vamos generando las URL tanto para la base de datos como para la aplicación:
+````dockerfile
+minikube service yarah-ms-persons --url
+minikube service yarah-db-ms-persons --url
+````
 
 -------------------------------
 
