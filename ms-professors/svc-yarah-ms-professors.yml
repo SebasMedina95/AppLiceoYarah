@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yarah-ms-professors
+spec:
+  ports:
+  - port: 18884
+    protocol: TCP
+    targetPort: 18884
+  selector:
+    app: yarah-ms-professors
+  type: LoadBalancer
+

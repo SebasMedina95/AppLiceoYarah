@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yarah-db-ms-professors
+spec:
+  ports:
+    - nodePort: 30004
+      port: 5432
+      protocol: TCP
+      targetPort: 5432
+  selector:
+    app: yarah-db-ms-professors
+  type: NodePort

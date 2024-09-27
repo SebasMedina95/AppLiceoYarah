@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: yarah-db-ms-professors
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: yarah-db-ms-professors
+  template:
+    metadata:
+      labels:
+        app: yarah-db-ms-professors
+    spec:
+      containers:
+      - image: postgres:16.4
+        name: postgres
+        ports:
+        - containerPort: 5432
+        env:
+          - name: POSTGRES_PASSWORD
+            value: "1234"
+          - name: POSTGRES_DB
+            value: yarah_ms_professors_db
+          - name: POSTGRES_USER
+            value: postgres
+
+---
+#Para la conexión desde afuera
+apiVersion: v1
+kind: Service
+metadata:
+  name: yarah-db-ms-professors
+spec:
+  selector:
+    app: yarah-db-ms-professors
+  ports:
+    - protocol: TCP
+      port: 5432       # Puerto dentro del clúster
+      targetPort: 5432 # Puerto dentro del contenedor
+      nodePort: 30004  # Puerto expuesto externamente (escoge uno en el rango 30000-32767)
+  type: NodePort       # Define que este servicio será de tipo NodePort
