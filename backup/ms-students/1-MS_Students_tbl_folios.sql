@@ -1,0 +1,4 @@
+INSERT INTO public.tbl_folios (date_created,date_updated,description,folio,resolution,status,user_created,user_updated) VALUES
+	 ('2024-09-01 23:01:18.998','2024-09-01 23:01:18.998','Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for.','FT0019210S','Resolución Carta Bage del 2001',true,'usuario123','usuario123'),
+	 ('2024-09-02 09:23:48.772','2024-09-02 10:04:40.088','All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.','FX0077690S','Resolución Pom''s Dolly 2021',true,'usuario123','usuario123'),
+	 ('2024-09-01 23:03:37.611','2024-09-02 10:12:26.005','Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).','FT0020129A','Resolución Gallery''s Stone 2018',true,'usuario123','usuario123');

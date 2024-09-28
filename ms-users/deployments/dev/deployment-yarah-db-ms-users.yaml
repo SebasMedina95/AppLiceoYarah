@@ -24,6 +24,14 @@ spec:
             value: yarah_ms_users_db
           - name: POSTGRES_USER
             value: postgres
+        volumeMounts:
+          - name: data-k8s-yarah-db-ms-users
+            mountPath: /var/lib/postgresql/data
+      #Para persistir los datos - Usamos el Claim para la reclamación
+      volumes:
+        - name: data-k8s-yarah-db-ms-users
+          persistentVolumeClaim:
+            claimName: ms-users-pvc.claim
 
 ---
 #Para la conexión desde afuera

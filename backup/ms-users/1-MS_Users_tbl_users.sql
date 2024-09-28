@@ -1,0 +1,20 @@
+INSERT INTO public.tbl_users (date_created,date_updated,document_person,email,"password",status,user_created,user_updated,username) VALUES
+	 ('2024-09-05 20:24:51.13','2024-09-05 20:24:51.13','1478129100','antonycharlarg2@correo.com','$2a$10$xejuAZTbKrhTQzrMRpHiuuMbX8v3E6fFETWpQ4Yst3lioZGzhouFC',true,'usuario123','usuario123','1478129100Antony'),
+	 ('2024-08-21 11:48:08.043','2024-08-21 11:48:08.043','1220111287','elsebascarasca245@correo.com','$2a$10$cPXO9U9TtBPDBNINRPYmJet5GY/Q8prW5FeeoeZ8QIleG3lRZ7tc6',true,'usuario123','usuario123','1220111287Sebastian'),
+	 ('2024-08-21 12:10:14.918','2024-08-21 12:10:14.918','1290128192','nataherrera124@correo.com','$2a$10$iJn8LuQR0stjZvP/0xoxPuluPMOOJWB8EWwKnIf6VhvEXgp.Lg2Hm',true,'usuario123','usuario123','1290128192Natalia'),
+	 ('2024-08-21 12:11:03.578','2024-08-21 12:11:03.578','1211901211','vanecarras24@correo.com','$2a$10$USkhduqyJ6Q3WZGQ23DYjOYn3jCcIKtkK5aiO0UnO6emGOYOJ0rNq',true,'usuario123','usuario123','1211901211Vanessa'),
+	 ('2024-08-21 14:46:07.609','2024-08-21 14:46:07.609','1182000912','danibasti429@correo.com','$2a$10$dYHjFocf4YtmVI2ra8qf2edg6jvX.12cm66590/w9uPsf27faIibO',true,'usuario123','usuario123','1182000912Daniela'),
+	 ('2024-08-21 12:09:59.413','2024-08-21 17:01:37.235','1200121981','correo-update@correo.com','$2a$10$roXqUVNv7SQzGcIVIRw.gelNddlruiY7/2CKXcJX9s1jsr5rUhary',true,'usuario123','usuario123','1200121981Juan'),
+	 ('2024-08-22 17:20:08.41','2024-08-22 17:20:08.41','1000922201','f.dejesus.medinahenao1957@gmail.com','$2a$10$03AKwyyzOnH7tAh6EnQqBu9uBuOEQpavYZo8uiWgLeZCK8IjQRMau',true,'usuario123','usuario123','1000922201Fabio'),
+	 ('2024-08-23 18:31:10.106','2024-08-23 18:31:10.106','1001281929','m.ceciliatoro1973@gmail.com','$2a$10$ncaRHtznXQruV4qSBH5pCuai7XTo8scXuP5bh/HPXJsS1swBUPCBq',true,'usuario123','usuario123','1001281929Monica'),
+	 ('2024-08-27 00:30:10.464','2024-08-27 00:30:10.464','1200912182','parraolartejoeldejesus@gmail.com','$2a$10$yrnwQkF/t0whR5i2lNo62eJ96Sd38AImEqQ5einUQo6hKcCkql5Cu',true,'usuario123','usuario123','1200912182Joel'),
+	 ('2024-09-04 16:18:58.974','2024-09-04 16:18:58.974','1210999012','jsebastian19952011@gmail.com','$2a$10$Mww5fAMjwGNAfMcyFvP1/elNzZiKyS9SYCnw.UfIVr5EdsfZFu9Qi',true,'usuario123','usuario123','1210999012Juan');
+INSERT INTO public.tbl_users (date_created,date_updated,document_person,email,"password",status,user_created,user_updated,username) VALUES
+	 ('2024-09-04 23:29:27.608','2024-09-04 23:29:27.608','1281111024','mariaisabelvale4@correo.com','$2a$10$1k0OBSHxP8zxCioQ5Crh6e9jbK9qmNtwLgCsxB8UYK9R2sUYpV7Ae',true,'usuario123','usuario123','1281111024Maria'),
+	 ('2024-09-12 04:51:38.165','2024-09-12 04:51:38.165','1200122910','carootalvaro32@correo.com','$2a$10$FVXHsCtnoC12TclmpZ0ZZurCmHLigXil/PUweqOqTun13flmvcO.K',true,'usuario123','usuario123','1200122910Carolina'),
+	 ('2024-09-16 22:47:20.324','2024-09-16 22:47:20.324','89540339','anabelcarranza24@correo.com','$2a$10$gjtnfOyyGizavNcswrDNpeoeq.SY1Q972eoXuCOTHcfxj1hucFiCm',true,'usuario123','usuario123','89540339Anabel'),
+	 ('2024-09-16 22:54:09.023','2024-09-16 22:54:09.023','85490392','glroaimaria43@correo.com','$2a$10$DQE0l8x8PufszXkw6XE.LOeLVGQ3owUWI/pZYHQfscM8NIiZtJjqC',true,'usuario123','usuario123','85490392Gloria'),
+	 ('2024-09-16 22:58:26.602','2024-09-16 22:58:26.602','76540991','raquiloaiza4@correo.com','$2a$10$tWbEz30Lp50XKAH1m9SMhuMVoc/e4KEL2NjslXNs2RSv7dEWMXZfK',true,'usuario123','usuario123','76540991Raquel'),
+	 ('2024-09-16 23:02:56.904','2024-09-16 23:02:56.904','91201288','johancano3902@correo.com','$2a$10$SXAoAMw6xq.IErHVGE4da..vF9TbiLmIo7eI/YtNIxhUXSLlBYtCi',true,'usuario123','usuario123','91201288Johan'),
+	 ('2024-09-16 23:17:17.038','2024-09-16 23:17:17.038','91671222','esperanzaquin423@correo.com','$2a$10$R0gcdzslUeLRrc7/4hix2eGEUebYNLkZJcv8qFMgAYsSrlGVrK452',true,'usuario123','usuario123','91671222Esperanza'),
+	 ('2024-09-19 15:33:30.548','2024-09-19 15:33:30.548','99543009','elcicasta23@correo.com','$2a$10$2xGefGonNPxc6RxMzh6bXe.IgAjpFfRmxklc1Z5NEa5Qoc96SWzyu',true,'usuario123','usuario123','99543009Gloria');
