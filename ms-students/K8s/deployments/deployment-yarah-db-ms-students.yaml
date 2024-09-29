@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: yarah-db-ms-users
+  name: yarah-db-ms-students
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: yarah-db-ms-users
+      app: yarah-db-ms-students
   template:
     metadata:
       labels:
-        app: yarah-db-ms-users
+        app: yarah-db-ms-students
     spec:
       containers:
       - image: postgres:16.4
@@ -21,30 +21,30 @@ spec:
           - name: POSTGRES_PASSWORD
             value: "1234"
           - name: POSTGRES_DB
-            value: yarah_ms_users_db
+            value: yarah_ms_students_db
           - name: POSTGRES_USER
             value: postgres
         volumeMounts:
-          - name: data-k8s-yarah-db-ms-users
+          - name: data-k8s-yarah-db-ms-students
             mountPath: /var/lib/postgresql/data
       #Para persistir los datos - Usamos el Claim para la reclamación
       volumes:
-        - name: data-k8s-yarah-db-ms-users
+        - name: data-k8s-yarah-db-ms-students
           persistentVolumeClaim:
-            claimName: ms-users-pvc.claim
+            claimName: ms-students-pvc.claim
 
 ---
 #Para la conexión desde afuera
 apiVersion: v1
 kind: Service
 metadata:
-  name: yarah-db-ms-users
+  name: yarah-db-ms-students
 spec:
   selector:
-    app: yarah-db-ms-users
+    app: yarah-db-ms-students
   ports:
     - protocol: TCP
       port: 5432       # Puerto dentro del clúster
       targetPort: 5432 # Puerto dentro del contenedor
-      nodePort: 30002  # Puerto expuesto externamente (escoge uno en el rango 30000-32767)
+      nodePort: 30003  # Puerto expuesto externamente (escoge uno en el rango 30000-32767)
   type: NodePort       # Define que este servicio será de tipo NodePort
