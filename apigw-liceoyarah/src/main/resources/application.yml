@@ -9,19 +9,19 @@ spring:
           filters:
             - StripPrefix=2
         - id: yarah-ms-users
-          uri: lb://yarah-ms-users
+          uri: http://yarah-ms-users:18882
           predicates:
             - Path=/apigw/ms-users/**
           filters:
             - StripPrefix=2
         - id: yarah-ms-students
-          uri: lb://yarah-ms-students
+          uri: http://yarah-ms-students:18883
           predicates:
             - Path=/apigw/ms-students/**
           filters:
             - StripPrefix=2
         - id: yarah-ms-professors
-          uri: lb://yarah-ms-professors
+          uri: http://yarah-ms-professors:18884
           predicates:
             - Path=/apigw/ms-professors/**
           filters:
