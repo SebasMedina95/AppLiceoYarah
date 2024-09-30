@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: yarah-ms-persons
+          uri: http://yarah-ms-persons:18881
+          predicates:
+            - Path=/apigw/ms-persons/**
+          filters:
+            - StripPrefix=2
+        - id: yarah-ms-users
+          uri: lb://yarah-ms-users
+          predicates:
+            - Path=/apigw/ms-users/**
+          filters:
+            - StripPrefix=2
+        - id: yarah-ms-students
+          uri: lb://yarah-ms-students
+          predicates:
+            - Path=/apigw/ms-students/**
+          filters:
+            - StripPrefix=2
+        - id: yarah-ms-professors
+          uri: lb://yarah-ms-professors
+          predicates:
+            - Path=/apigw/ms-professors/**
+          filters:
+            - StripPrefix=2

@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>apigw-liceoyarah</module>
         <module>ms-persons</module>
         <module>ms-users</module>
         <module>ms-students</module>
